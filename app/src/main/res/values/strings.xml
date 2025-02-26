@@ -2,4 +2,6 @@
     <string name="app_name">Endurely</string>
     <string name="welcome_image">Welcome image</string>
     <string name="welcome">Welcome</string>
+    <string name="hello_msg">Hello</string>
+    <string name="sign_in_to_continue">Sign in to continue</string>
 </resources>

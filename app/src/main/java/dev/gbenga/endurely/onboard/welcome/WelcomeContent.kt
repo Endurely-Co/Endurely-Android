@@ -1,4 +1,4 @@
-package dev.gbenga.endurely.onboard
+package dev.gbenga.endurely.onboard.welcome
 
 data class WelcomeContent(val title: String,
                           val description: String,

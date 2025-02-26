@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.ui.buttons
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -10,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import dev.gbenga.endurely.ui.theme.btnNormal
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.smallRadius
 
@@ -17,12 +19,12 @@ import dev.gbenga.endurely.ui.theme.smallRadius
 contentColor = Color.White
  */
 @Composable
-fun EndureButton(text: String,  bgColor: Color =  Color.White, modifier: Modifier = Modifier,  onClick: () -> Unit){
-    Button(onClick = onClick, modifier = modifier,
-        colors = ButtonDefaults.buttonColors(containerColor = bgColor),
+fun EndureButton(text: String, textColor: Color = MaterialTheme.typography.bodyLarge.color,  bgColor: Color? =  null, modifier: Modifier = Modifier,  onClick: () -> Unit){
+    Button(onClick = onClick, modifier = modifier.height(btnNormal),
+        colors = if(bgColor == null )  ButtonDefaults.buttonColors() else ButtonDefaults.buttonColors(containerColor = bgColor),
         shape = RoundedCornerShape(
-            normalRadius)){
-        Text(text, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.W800))
+            normalRadius)){ //Color.White
+        Text(text, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.W800, color = textColor))
     }
 }
 @Composable

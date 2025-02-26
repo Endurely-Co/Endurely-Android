@@ -20,6 +20,8 @@ class EndureNavigation(val navHostController:  NavHostController) {
         navHostController.navigate(Welcome)
     }
 
+    fun gotoLogin() = navHostController.navigate(Login)
 
+    fun gotoSignUp() = navHostController.navigate(SignUp)
 
 }

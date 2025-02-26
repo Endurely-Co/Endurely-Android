@@ -6,6 +6,7 @@ val smallPadding = 5.dp
 val normalPadding = 10.dp
 val largePadding = 20.dp
 val xLargePadding = 30.dp
+val xXLargePadding = 50.dp
 val normalRadius = 20.dp
 val smallRadius = 8.dp
 val xSmallRadius = 5.dp
