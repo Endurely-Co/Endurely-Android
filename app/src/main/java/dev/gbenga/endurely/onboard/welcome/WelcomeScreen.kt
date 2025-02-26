@@ -3,6 +3,7 @@ package dev.gbenga.endurely.onboard.welcome
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -11,9 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,9 +58,9 @@ import org.koin.androidx.compose.koinViewModel
 fun WelcomeScreen(navigation: EndureNavigation, welcomeViewModel: WelcomeViewModel = koinViewModel()) {
     val welcomeUiState by welcomeViewModel.welcomeUiState.collectAsStateWithLifecycle()
     WelcomeScreenContent( welcomeUiState.welcomeContent, signUpRequest ={
-        navigation.gotoLogin()
-    }, loginRequest = {
         navigation.gotoSignUp()
+    }, loginRequest = {
+        navigation.gotoLogin()
     })
 }
 
@@ -58,27 +68,33 @@ fun WelcomeScreen(navigation: EndureNavigation, welcomeViewModel: WelcomeViewMod
 fun WelcomeScreenContent( welcomeContent: List<WelcomeContent>, loginRequest: () -> Unit,
                           signUpRequest: () -> Unit){
     var screenSize by remember { mutableStateOf(IntSize.Zero) }
+
     Scaffold(modifier = Modifier
         .fillMaxWidth()
         .onGloballyPositioned {
             screenSize = it.size
-        }
+        },
     ) {
         val pageState = rememberPagerState (pageCount = {welcomeContent.size})
         val bgColor = animateColorAsState(targetValue = Color(welcomeContent[pageState
             .currentPage].colorInt),
             label = "",// animationSpec =
         )
+
         ConstraintLayout (modifier = Modifier
-            .background(bgColor.value).fillMaxSize(),) {
+            .background(bgColor.value)
+            .fillMaxSize()
+            .padding(it),) {
             val (bottomContent, image) = createRefs()
+
         HorizontalPager(pageState, modifier = Modifier
-            .padding(it).fillMaxSize()) { page ->
+            .fillMaxSize()) { page ->
                 Image(painter = painterResource(welcomeContent[pageState
                     .currentPage].clipArt), contentDescription = stringResource(
                     R.string.welcome_image),
                     modifier = Modifier
-                        .fillMaxSize().constrainAs(image){
+                        .fillMaxSize()
+                        .constrainAs(image) {
                             bottom.linkTo(parent.bottom)
                         },
                     alignment = Alignment.BottomCenter,
@@ -86,11 +102,12 @@ fun WelcomeScreenContent( welcomeContent: List<WelcomeContent>, loginRequest: ()
 
             }
 
-            BottomContent(modifier = Modifier.padding(horizontal = xLargePadding)
+            BottomContent(modifier = Modifier
+                .padding(horizontal = xLargePadding)
                 .padding(bottom = xXLargePadding)
-                .constrainAs(bottomContent){
-                bottom.linkTo(parent.bottom)
-            }, loginRequest = loginRequest,
+                .constrainAs(bottomContent) {
+                    bottom.linkTo(parent.bottom)
+                }, loginRequest = loginRequest,
                 btnTextColor = bgColor.value,
                 signUpRequest = signUpRequest, description = welcomeContent[pageState.currentPage].description,
                 title = welcomeContent[pageState.currentPage].title){
@@ -118,20 +135,26 @@ fun BottomContent(modifier: Modifier, title: String, btnTextColor: Color,   desc
                 modifier = Modifier.padding(
                     bottom = xLargePadding), textAlign = TextAlign.Center)
 
-            Box(modifier = Modifier.padding(bottom = xXLargePadding, top = largePadding)
-                .padding(horizontal = largePadding).fillMaxWidth()) {
+            Box(modifier = Modifier
+                .padding(bottom = xXLargePadding, top = largePadding)
+                .padding(horizontal = largePadding)
+                .fillMaxWidth()) {
                 sliderContent()
             }
             ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
                 val (signUp, login) = createRefs()
                 EndureButton("Login", onClick = loginRequest,
-                    modifier = Modifier.halfWidthModifier().constrainAs(login){
-                        end.linkTo(parent.end)
-                    }, bgColor = Color.White, textColor = btnTextColor)
+                    modifier = Modifier
+                        .halfWidthModifier()
+                        .constrainAs(login) {
+                            end.linkTo(parent.end)
+                        }, bgColor = Color.White, textColor = btnTextColor)
 
                 EndureOutlinedButton("Signup", onClick = signUpRequest,
-                    modifier = Modifier.halfWidthModifier()
-                        .constrainAs(signUp){
+                    textColor = Color.White,
+                    modifier = Modifier
+                        .halfWidthModifier()
+                        .constrainAs(signUp) {
                             start.linkTo(parent.start)
                         })
             }

@@ -2,6 +2,15 @@
     <string name="app_name">Endurely</string>
     <string name="welcome_image">Welcome image</string>
     <string name="welcome">Welcome</string>
-    <string name="hello_msg">Hello</string>
+    <string name="login_title">Login</string>
+    <string name="sign_up_title_title">Sign up</string>
+    <string name="hello_msg">Hello,</string>
+    <string name="email_lb">Email</string>
+    <string name="firstname_lb">Firstname</string>
+    <string name="lastname_lb">Lastname</string>
+    <string name="password_lb">Password</string>
+    <string name="username_lb">Username</string>
     <string name="sign_in_to_continue">Sign in to continue</string>
+    <string name="create_new_acct">Create a new account to get started</string>
+    <string name="skip_btn">Skip</string>
 </resources>
