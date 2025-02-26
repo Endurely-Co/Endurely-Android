@@ -11,9 +11,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
@@ -22,9 +26,14 @@ import dev.gbenga.endurely.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GymScaffold(pageTitle: String? = null, onBackRequest: (() -> Unit)? = null,  content: @Composable () -> Unit){
-    Scaffold (
+fun GymScaffold(pageTitle: String? = null,
+                snackbarHostState: SnackbarHostState = SnackbarHostState(),   onBackRequest: (() -> Unit)? = null,  content: @Composable () -> Unit){
 
+
+    Scaffold (
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             pageTitle?.let { TopAppBar(title = {
                 Text(pageTitle)

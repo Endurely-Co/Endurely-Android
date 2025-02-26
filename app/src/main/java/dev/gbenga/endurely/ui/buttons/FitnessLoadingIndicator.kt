@@ -1,0 +1,44 @@
+package dev.gbenga.endurely.ui.buttons
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
+import dev.gbenga.endurely.R
+
+@Composable
+fun FitnessLoadingIndicator(modifier: Modifier = Modifier, show: Boolean = false) {
+    val initial = remember { 0f }
+    val primaryColor = MaterialTheme.colorScheme.primary
+    var rotation by remember { mutableFloatStateOf(initial) }
+    val rotationAnim by animateFloatAsState(rotation, label = "",)
+    if (show) {
+        val bicepsIndicator = ImageBitmap.imageResource(R.drawable.gym_ic)
+        Spacer(modifier = modifier.drawWithContent {
+            translate(top = rotationAnim) {
+                drawImage(
+                    bicepsIndicator,
+
+                    dstSize = IntSize(130, 120),
+                    colorFilter = ColorFilter.tint(primaryColor)
+                )
+                rotation = if (rotationAnim == 0f) {
+                    initial + 150f
+                } else initial
+            }
+        }.size(150.dp))
+    }
+}

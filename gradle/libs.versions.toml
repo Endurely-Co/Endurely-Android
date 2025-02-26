@@ -16,6 +16,7 @@ composeBom = "2024.04.01"
 mockkAgent = "1.13.16"
 mockkAndroid = "1.13.16"
 navigationCompose = "2.8.7"
+okhttp = "5.0.0-alpha.14"
 retrofit = "2.11.0"
 
 [libraries]
@@ -42,6 +43,7 @@ koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", versi
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 

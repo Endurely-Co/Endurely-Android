@@ -68,4 +68,5 @@ dependencies {
     implementation (libs.androidx.constraintlayout.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.koin.androidx.compose)
+    implementation(libs.okhttp)
 }

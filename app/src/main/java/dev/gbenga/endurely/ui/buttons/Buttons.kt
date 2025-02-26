@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.ui.buttons
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,13 +22,18 @@ import dev.gbenga.endurely.ui.theme.smallRadius
 contentColor = Color.White
  */
 @Composable
-fun EndureButton(text: String, textColor: Color = MaterialTheme.typography.bodyLarge.color,  bgColor: Color? =  null,
-                 modifier: Modifier = Modifier,  onClick: () -> Unit){
-    Button(onClick = onClick, modifier = modifier.height(btnNormal),
-        colors = if(bgColor == null )  ButtonDefaults.buttonColors() else ButtonDefaults.buttonColors(containerColor = bgColor),
-        shape = RoundedCornerShape(
-            normalRadius)){ //Color.White
-        Text(text, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.W800, color = textColor))
+fun EndureButton(text: String, textColor: Color = MaterialTheme.typography.bodyLarge.color,
+                 bgColor: Color? =  null,
+                 modifier: Modifier = Modifier,
+                 visible: Boolean = true,
+                 onClick: () -> Unit){
+    AnimatedVisibility(visible, modifier = modifier.height(btnNormal)) {
+        Button(onClick = onClick,
+            colors = if(bgColor == null )  ButtonDefaults.buttonColors() else ButtonDefaults.buttonColors(containerColor = bgColor),
+            shape = RoundedCornerShape(
+                normalRadius)){ //Color.White
+            Text(text, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.W800, color = textColor))
+        }
     }
 }
 @Composable

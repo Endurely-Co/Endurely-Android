@@ -1,14 +1,23 @@
 package dev.gbenga.endurely.onboard
 
+import dev.gbenga.endurely.onboard.data.LoginRequest
+import dev.gbenga.endurely.onboard.data.OnboardService
+import dev.gbenga.endurely.onboard.data.RepoState
 import dev.gbenga.endurely.onboard.data.SignUpRequest
+import dev.gbenga.endurely.onboard.data.repoContext
+import kotlin.coroutines.CoroutineContext
 
-class OnboardRepository {
+class OnboardRepository(private val onboardService: OnboardService,
+                        private val ioContext: CoroutineContext) {
 
-    fun logIn(email: String, password: String){
-
+    suspend fun logIn(email: String, password: String) = repoContext(ioContext){
+        onboardService.login(LoginRequest(email, password))
     }
 
-    fun signUp(signUpRequest: SignUpRequest){
-
+    suspend fun signUp(signUpRequest: SignUpRequest) = repoContext(ioContext) {
+        onboardService.signUp(signUpRequest)
     }
 }
+
+
+

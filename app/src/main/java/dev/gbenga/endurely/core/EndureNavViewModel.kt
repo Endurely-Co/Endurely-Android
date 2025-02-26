@@ -8,9 +8,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-abstract class EndureNavViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    fun runInScope(run: () -> Unit): Job = viewModelScope.launch { run() }
+abstract class EndureNavViewModel( savedStateHandle: SavedStateHandle? = null) : ViewModel() {
+
+    fun runInScope(run: suspend () -> Unit): Job = viewModelScope.launch { run() }
+
+    open fun clearState(){}
 }
 
 abstract class EndureNavAppViewModel(private val savedStateHandle: SavedStateHandle, app: Application)
