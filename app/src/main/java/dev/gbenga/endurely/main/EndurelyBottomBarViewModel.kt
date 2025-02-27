@@ -20,10 +20,10 @@ class EndurelyBottomBarViewModel : EndureNavViewModel() {
             it.copy(bottomBarItems = listOf(
                 EndurelyBottomBar(icon =R.drawable.dashboard_ic,
                     name = Tokens.dashboard, route = Dashboard),
-                EndurelyBottomBar(icon =R.drawable.triceps,
+                EndurelyBottomBar(icon =R.drawable.fitness,
                     name = Tokens.gymRoutine, route = GymRoutine
                 ),
-                EndurelyBottomBar(icon =R.drawable.settings_ic,
+                EndurelyBottomBar(icon =R.drawable.adjust_icc,
                     name = Tokens.settings, route = Settings
                 )
             ))

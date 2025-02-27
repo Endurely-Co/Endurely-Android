@@ -32,6 +32,7 @@ import dev.gbenga.endurely.R
 import dev.gbenga.endurely.main.EndurelyBottomBar
 import dev.gbenga.endurely.navigation.EndureNavigation
 import dev.gbenga.endurely.ui.theme.Orange
+import dev.gbenga.endurely.ui.theme.Purple
 import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.normalPadding
 import kotlinx.coroutines.launch
@@ -77,7 +78,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState, onInValidUser: ()
             }, actions = {
                 TextButton(onClick = {},modifier = Modifier
                     .drawBehind {
-                        drawCircle(color = Color(Orange), radius = 60f)
+                        drawCircle(color = Color(Purple), radius = 60f)
                     }
                     .size(80.dp)
                     .padding(horizontal = largePadding) ) {
