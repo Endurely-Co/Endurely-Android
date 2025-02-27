@@ -18,16 +18,7 @@ class LoginViewModel(savedStateHandle: SavedStateHandle,
     private val _loginUiState = MutableStateFlow(LoginUiState())
     val loginUiState = _loginUiState.asStateFlow()
 
-    private val _enableLogin = MutableStateFlow(false)
-    val enableLogin = _enableLogin.asStateFlow()
 
-    init {
-        _loginUiState.update { it.copy(buttonText = Tokens.logIn,
-            loginTextFields = listOf(EmailTextField(),
-                PasswordTextField()
-            )
-        ) }
-    }
 
     fun login(username: String, password: String){
         if(username.hasNChars(3) && password.hasNChars(6)){

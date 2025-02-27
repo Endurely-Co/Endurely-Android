@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.onboard.login
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ fun LoginScreen (nav: EndureNavigation, viewModel: LoginViewModel = koinViewMode
     val loginInUi by viewModel.loginUiState.collectAsStateWithLifecycle()
     LoginScreenContent(buttonText = loginInUi.buttonText, onBackRequest ={
         nav.pop()
+        Log.d("LoginScreen", "--> LoginScreen")
     }, logInUi = loginInUi, loginRequest = {
         // Open the dashboard
         nav.gotoDashboard()

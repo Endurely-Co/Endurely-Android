@@ -7,3 +7,5 @@ interface Screens
 @Serializable object Login : Screens
 @Serializable object SignUp : Screens
 @Serializable object Dashboard: Screens
+@Serializable object Settings: Screens
+@Serializable object GymRoutine: Screens

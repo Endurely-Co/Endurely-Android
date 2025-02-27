@@ -17,13 +17,17 @@ fun rememberEndureNavigation(): EndureNavigation{
 class EndureNavigation(val navHostController:  NavHostController) {
 
     fun gotoWelcome(){
+        pop()
         navHostController.navigate(Welcome)
     }
 
     fun pop() = navHostController.popBackStack()
 
-    fun gotoLogin(){
-        navHostController.popBackStack()
+
+    fun gotoLogin(onTop: Boolean =false){
+        if (onTop){
+            navHostController.popBackStack()
+        }
         navHostController.navigate(Login)
     }
 

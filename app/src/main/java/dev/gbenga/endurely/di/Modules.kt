@@ -1,8 +1,11 @@
-package dev.gbenga.endurely.onboard
+package dev.gbenga.endurely.di
 
 import androidx.lifecycle.SavedStateHandle
 import dev.gbenga.endurely.dashboard.DashboardRepository
 import dev.gbenga.endurely.dashboard.DashboardViewModel
+import dev.gbenga.endurely.dashboard.Greeting
+import dev.gbenga.endurely.main.EndurelyBottomBarViewModel
+import dev.gbenga.endurely.onboard.OnboardRepository
 import dev.gbenga.endurely.onboard.data.OnboardService
 import dev.gbenga.endurely.onboard.login.LoginViewModel
 import dev.gbenga.endurely.onboard.signup.SignUpViewModel
@@ -11,13 +14,17 @@ import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
+import kotlin.coroutines.CoroutineContext
 
 val onboardModule = module {
    single { get<Retrofit>().create(OnboardService::class.java) }
-    single { DashboardRepository() }
-    single { OnboardRepository(get(), ioContext = Dispatchers.IO) }
+    single { Greeting() }
+    single<CoroutineContext> { Dispatchers.IO }
+    single { OnboardRepository(get(),  get(), get()) }
+    single { DashboardRepository(get(), get()) }
     viewModel { (handle : SavedStateHandle) ->  WelcomeViewModel(handle, get()) }
     viewModel { (savedState: SavedStateHandle) -> LoginViewModel(savedState, get()) }
     viewModel { SignUpViewModel(get()) }
-    viewModel { DashboardViewModel(get()) }
+    viewModel { DashboardViewModel(get(), get()) }
+    viewModel { EndurelyBottomBarViewModel() }
 }

@@ -27,7 +27,8 @@ import dev.gbenga.endurely.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GymScaffold(pageTitle: String? = null,
-                snackbarHostState: SnackbarHostState = SnackbarHostState(),   onBackRequest: (() -> Unit)? = null,  content: @Composable () -> Unit){
+                snackbarHostState: SnackbarHostState = SnackbarHostState(),
+                onBackRequest: (() -> Unit)? = null,  content: @Composable () -> Unit){
 
 
     Scaffold (
