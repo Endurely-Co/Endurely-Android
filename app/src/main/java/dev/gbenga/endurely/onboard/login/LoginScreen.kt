@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.onboard.login
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +39,8 @@ fun LoginScreen (nav: EndureNavigation, viewModel: LoginViewModel = koinViewMode
         nav.pop()
     }, logInUi = loginInUi, loginRequest = {
         // Open the dashboard
+        nav.gotoDashboard()
+        viewModel.clearState()
     } , onErrorRequest = {
         viewModel.clearState()
     }){username, password ->
@@ -67,7 +71,7 @@ fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
                 Text(stringResource(R.string.hello_msg),
                     style = MaterialTheme.typography.headlineLarge)
                 Text(stringResource(R.string.sign_in_to_continue),
-                    style = MaterialTheme.typography.titleLarge)
+                    style = MaterialTheme.typography.titleSmall)
             }
 
             var username by remember{ mutableStateOf("") }
@@ -80,7 +84,7 @@ fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
                 end.linkTo(parent.end)
             }, verticalArrangement = Arrangement.spacedBy(xLargePadding)) {
 
-                EndurelyTextField(value = username, label = R.string.email_lb){ value ->
+                EndurelyTextField(value = username, label = R.string.username_lb){ value ->
                     username = value
                 }
                 EndurelyTextField(value = password, isPassword = true, label = R.string.password_lb){ value ->
@@ -88,33 +92,41 @@ fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
                 }
             }
 
-            logInUi.loginUi.let { uiState ->
-                when(uiState){
-                    is UiState.Success ->{
-                        loginRequest()
-                    }
-                    is UiState.Failure ->{
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar(uiState.message)
-                            onErrorRequest()
+            var isLoading by remember { mutableStateOf(false) }
+
+            AnimatedVisibility(isLoading, modifier = Modifier.constrainAs(loadingInd){
+                bottom.linkTo(parent.bottom,
+                    margin = xXLargePadding)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }) {
+                CircularProgressIndicator(modifier = Modifier,)
+            }
+
+            logInUi.loginUi.let { logInUi ->
+
+                LaunchedEffect(logInUi) {
+                    when(logInUi){
+                        is UiState.Success -> {
+                            loginRequest()
+                        }
+                        is UiState.Failure ->{
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(logInUi.message)
+                                onErrorRequest()
+                            }
                         }
 
+                        else ->{
+                            isLoading = logInUi is UiState.Loading
+                        }
                     }
-                    is UiState.Loading ->{
-                        CircularProgressIndicator(modifier = Modifier.constrainAs(loadingInd){
-                            bottom.linkTo(parent.bottom,
-                                margin = xXLargePadding)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        },)
-                    }
-                    else -> { /* Nothing*/}
                 }
 
 
                 EndureButton(text = buttonText, onClick = {
                     onLoginClick(username, password)
-                }, visible = uiState !is UiState.Loading,
+                }, visible = !isLoading,
                     modifier = Modifier.constrainAs(loginBtn){
                         bottom.linkTo(parent.bottom, margin = xXLargePadding)
                         start.linkTo(parent.start)

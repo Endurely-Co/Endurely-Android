@@ -9,14 +9,12 @@ sealed interface RepoState<T>{
     data class Error<T>(val errorMsg: String): RepoState<T>
 }
 
-suspend fun <T> repoContext(coroutineContext: CoroutineContext,
-                            block: suspend  () -> ApiResponse<T>) : RepoState<T> =  withContext(coroutineContext){
+suspend fun <RESULT> repoContext(coroutineContext: CoroutineContext,
+                            block: suspend  () -> RESULT) : RepoState<RESULT> =  withContext(coroutineContext){
     try {
-        block().let { b ->
-            b.apiSuccess?.data?.let {  RepoState.Success(it) }
-                ?:  throw Exception(b.error?.message ?: "App couldn't understand Api response.")
-        }
+        RepoState.Success(block())
     }catch (error: Exception){
+        error.printStackTrace()
         RepoState.Error((error.message ?: "App couldn't understand Api response."))
     }
 }

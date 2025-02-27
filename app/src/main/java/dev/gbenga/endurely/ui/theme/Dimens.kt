@@ -9,6 +9,7 @@ val xLargePadding = 30.dp
 val xXLargePadding = 50.dp
 val normalRadius = 20.dp
 val smallRadius = 8.dp
+val menuCardHeight = 150.dp
 val xSmallRadius = 5.dp
 val normalThickness = 2.dp
 val btnNormal = 50.dp

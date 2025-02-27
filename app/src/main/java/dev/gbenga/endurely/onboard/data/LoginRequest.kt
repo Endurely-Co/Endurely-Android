@@ -3,7 +3,7 @@ package dev.gbenga.endurely.onboard.data
 import com.google.gson.annotations.SerializedName
 
 data class LoginRequest(
-    val email: String,
+    val username: String,
     val password: String
     )
 

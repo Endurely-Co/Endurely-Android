@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.onboard.signup
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +32,7 @@ import dev.gbenga.endurely.ui.buttons.GymScaffold
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.xLargePadding
 import dev.gbenga.endurely.ui.theme.xXLargePadding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -42,6 +44,7 @@ fun SigUpScreen (nav: EndureNavigation, viewModel: SignUpViewModel = koinViewMod
         nav.pop()
     }, signUpRequest ={
         nav.gotoLogin()
+        viewModel.clearState()
     }, sigUpErrorRequest ={
         viewModel.clearState()
     }) { email, firstName, lastName, password, username ->
@@ -74,7 +77,8 @@ fun SigUpScreenContent(buttonText: String,onBackRequest: () -> Unit,
                     style = MaterialTheme.typography.headlineLarge)
                 Text(
                     stringResource(R.string.create_new_acct),
-                    style = MaterialTheme.typography.titleSmall)
+                    style = MaterialTheme.typography.titleSmall
+                )
             }
 
             var email by remember{ mutableStateOf("") }
@@ -85,8 +89,8 @@ fun SigUpScreenContent(buttonText: String,onBackRequest: () -> Unit,
 
             Column(modifier = Modifier.verticalScroll(verticalScrollState)
                 .constrainAs(editTextLayout){
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
+                top.linkTo(topLayout.bottom, xXLargePadding)
+                bottom.linkTo(loginBtn.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }, verticalArrangement = Arrangement.spacedBy(xLargePadding)) {
@@ -113,38 +117,56 @@ fun SigUpScreenContent(buttonText: String,onBackRequest: () -> Unit,
 
 
             signUpUi.signUp.let { signUp ->
-                when(signUp){
-                    is UiState.Success -> {
-                        signUpRequest()
+
+                var isLoading by remember { mutableStateOf(false) }
+
+                AnimatedVisibility(isLoading, modifier = Modifier.constrainAs(loadingInd){
+                    bottom.linkTo(parent.bottom,
+                        margin = xXLargePadding)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }) {
+                    CircularProgressIndicator(modifier = Modifier,)
+                }
+
+
+                LaunchedEffect(signUp) {
+                    when(signUp){
+                        is UiState.Success -> {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar(signUp.data)
+                                delay(3000)
+                            }
+                            signUpRequest()
+                        }
+                        is UiState.Failure ->{
+                            coroutineScope.launch { snackbarHostState.showSnackbar(signUp.message) }
+                            sigUpErrorRequest()
+                        }
+
+                        else ->{
+                            isLoading = signUp is UiState.Loading
+                        }
                     }
-                    is UiState.Failure ->{
-                        coroutineScope.launch { snackbarHostState.showSnackbar(signUp.message) }
-                        sigUpErrorRequest()
-                    }
-                    is UiState.Loading ->{
-                        CircularProgressIndicator(modifier = Modifier.constrainAs(loadingInd){
-                            bottom.linkTo(parent.bottom,
-                                margin = xXLargePadding)
+                }
+
+
+
+                EndureButton(text = buttonText, onClick = {
+                    onClickSignUp(email, firstName, lastName, password, username)
+                },
+                    visible = signUp !is UiState.Loading,
+                    modifier = Modifier
+                        .constrainAs(loginBtn) {
+                            bottom.linkTo(parent.bottom, margin = normalPadding)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                        },)
-                    }
-                    else ->{ /*Idle*/}
-                }
+                        }
+                        .fillMaxWidth()
+                        .padding(vertical = xXLargePadding))
             }
 
 
-            EndureButton(text = buttonText, onClick = {
-                onClickSignUp(email, firstName, lastName, password, username)
-            },
-                modifier = Modifier
-                    .constrainAs(loginBtn) {
-                        bottom.linkTo(parent.bottom, margin = normalPadding)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .fillMaxWidth()
-                    .padding(vertical = xXLargePadding))
         }
     }
 }

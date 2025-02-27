@@ -22,8 +22,18 @@ class EndureNavigation(val navHostController:  NavHostController) {
 
     fun pop() = navHostController.popBackStack()
 
-    fun gotoLogin() = navHostController.navigate(Login)
+    fun gotoLogin(){
+        navHostController.popBackStack()
+        navHostController.navigate(Login)
+    }
+
+    private fun pop(after: () -> Unit){
+        pop()
+        after.invoke()
+    }
 
     fun gotoSignUp() = navHostController.navigate(SignUp)
+
+    fun gotoDashboard() = pop { navHostController.navigate(Dashboard) }
 
 }

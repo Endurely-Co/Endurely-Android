@@ -23,7 +23,7 @@ class SignUpViewModel(private val onboardRepo: OnboardRepository) : EndureNavVie
             runInScope {
                 when(val repoState = onboardRepo.signUp(SignUpRequest(email, firstName, lastName, password, username))){
                     is RepoState.Success ->{
-                        _signUpState.update { it.copy(signUp = UiState.Success(repoState.data)) }
+                        _signUpState.update { it.copy(signUp = UiState.Success("Sign up was successful")) }
                     }
                     is RepoState.Error -> {
                         _signUpState.update { it.copy(signUp = UiState.Failure(repoState.errorMsg)) }
@@ -35,6 +35,7 @@ class SignUpViewModel(private val onboardRepo: OnboardRepository) : EndureNavVie
         }
 
     }
+
 
     override fun clearState() {
         _signUpState.update { it.copy(signUp = UiState.Idle()) }

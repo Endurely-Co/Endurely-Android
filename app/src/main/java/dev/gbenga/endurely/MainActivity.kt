@@ -8,6 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import dev.gbenga.endurely.dashboard.DashboardScreen
+import dev.gbenga.endurely.navigation.Dashboard
 import dev.gbenga.endurely.navigation.Login
 import dev.gbenga.endurely.navigation.SignUp
 import dev.gbenga.endurely.navigation.Welcome
@@ -35,6 +37,8 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable<SignUp> { SigUpScreen(navHost) }
+
+                    composable<Dashboard> { DashboardScreen(navHost) }
                 }
             }
         }
