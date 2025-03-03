@@ -31,7 +31,7 @@ val onboardModule = module {
     single<CoroutineContext> { Dispatchers.IO }
     single { OnboardRepository(get(), get(), get()) }
     single { DashboardRepository(get(), get()) }
-    single { SettingsRepository(get(), get()) }
+    single { SettingsRepository(get(), get(), get()) }
     viewModel { (handle: SavedStateHandle) -> WelcomeViewModel(handle, get()) }
     viewModel { (savedState: SavedStateHandle) -> LoginViewModel(savedState, get()) }
     viewModel { SignUpViewModel(get()) }

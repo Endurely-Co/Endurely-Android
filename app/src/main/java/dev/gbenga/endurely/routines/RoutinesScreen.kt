@@ -86,7 +86,7 @@ fun RoutinesContent(routineUi: RoutineUiState, showMessage: (String) -> Unit, on
                             end.linkTo(parent.end)
                         }.fillMaxSize().padding(vertical = largePadding)) {
                             items(routines.size){
-                                RoutineUiItem(routines[it], routineUi.isDarkMode ?: isSystemInDarkTheme())
+                                RoutineUiItem(routines[it], it, routineUi.isDarkMode ?: isSystemInDarkTheme())
                             }
                         }
                     }

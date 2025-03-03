@@ -36,7 +36,7 @@ data class AppColor(val defaultCard: Color = Color.White)
 fun appColor(darkTheme: Boolean = isSystemInDarkTheme()): AppColor{
     return remember {
         when {
-            darkTheme -> AppColor(defaultCard = Color(0xFF2C3E50))
+            darkTheme -> AppColor(defaultCard = Color(0xFF212121))
             else -> AppColor(defaultCard = Color(0XFFECF0F1))
         }
     }

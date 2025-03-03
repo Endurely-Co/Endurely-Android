@@ -2,6 +2,7 @@ package dev.gbenga.endurely.routines
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -40,12 +42,15 @@ import dev.gbenga.endurely.ui.theme.smallPadding
 import dev.gbenga.endurely.ui.theme.xXLargePadding
 
 @Composable
-fun RoutineUiItem(routine: RoutineData, isDarkMode: Boolean){
+fun RoutineUiItem(routine: RoutineData, index: Int,  isDarkMode: Boolean){
     Card(modifier = Modifier.padding(horizontal = normalPadding)
         .fillMaxWidth()
         .clip(RoundedCornerShape(normalRadius))
         //.background(appColor(isDarkMode).defaultCard)
-        .height(menuCardHeight).padding(horizontal = normalPadding, vertical = normalPadding),
+        .height(menuCardHeight).padding(horizontal = normalPadding, vertical = normalPadding)
+        .clickable {
+
+        },
         elevation = 1.dp, shape = RoundedCornerShape(normalRadius),
         backgroundColor = appColor(isDarkMode).defaultCard
     ) {
@@ -59,13 +64,14 @@ fun RoutineUiItem(routine: RoutineData, isDarkMode: Boolean){
             }, verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 item {
                     Text(routine.routineName,
-                        style = MaterialTheme.typography.titleLarge)
+                        style = MaterialTheme.typography.titleLarge.copy(), maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
                     Text(routine.routineRepsStr(), style = MaterialTheme.typography.bodyMedium,)
                     Text(routine.duration(), style = MaterialTheme.typography.bodyMedium,)
                 }
                 item {
                     // num of exercises completed - to be updated
-                    Text("3/${routine.routineReps}", style = MaterialTheme.typography.bodySmall.copy(fontSize = 8.sp),
+                    Text("3/${routine.routineReps}", style = MaterialTheme.typography.bodySmall, maxLines = 1,
                     ) // NAME of the exercise
                     LinearProgressIndicator(progress = 3/routine.routineReps.toFloat(),  modifier = Modifier
                         .height(7.dp).fillMaxWidth(.5f))
@@ -80,7 +86,7 @@ fun RoutineUiItem(routine: RoutineData, isDarkMode: Boolean){
                     bottom.linkTo(parent.bottom)
                 }.width(routineImageWidth).height(routineImageHeight)
                     .clip(RoundedCornerShape(normalRadius))
-                    .background(Color(Orange)),
+                    .background(Color(if(index % 2 == 0) 0xFF03A9F4 else 0xFF81C784)),
                 contentScale = ContentScale.Fit)
 
         }

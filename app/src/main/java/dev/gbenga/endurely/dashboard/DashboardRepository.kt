@@ -10,8 +10,4 @@ class DashboardRepository(private val userDataStore: UserDataStore,
 
     suspend fun getUser() = userDataStore.login.first()
 
-    suspend fun logout() = repoContext(ioContext){
-        // Sign out api
-        userDataStore.clearLogin()
-    }
 }

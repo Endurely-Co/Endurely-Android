@@ -51,16 +51,5 @@ class DashboardViewModel(private val dashboardRepository: DashboardRepository, p
 
     }
 
-    fun signOut(){
-        runInScope {
-            when(val logout = dashboardRepository.logout() ){
-                is RepoState.Success ->{
-                    _signOut.update { UiState. Success("Successfully signed out")}
-                }
-                is RepoState.Error ->{
-                    _signOut.update { UiState.Failure("Something went wrong. Failed to log out") }
-                }
-            }
-        }
-    }
+
 }

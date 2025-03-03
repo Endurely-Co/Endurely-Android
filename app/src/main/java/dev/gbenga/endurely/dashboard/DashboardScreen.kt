@@ -14,8 +14,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -63,9 +66,7 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
             else -> {/*Nothing*/}
         }
     }
-    DashboardScreenContent(dashboardUi, onClickItem={
-        viewModel.signOut()
-    }){
+    DashboardScreenContent(dashboardUi,){
         nav.gotoWelcome()
     }
 }
@@ -73,15 +74,22 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreenContent(dashboardUiState: DashboardUiState,
-                           onClickItem: (Int) -> Unit, onInValidUser: () -> Unit,){
+fun DashboardScreenContent(dashboardUiState: DashboardUiState, onInValidUser: () -> Unit,){
     val pagerState = rememberPagerState(pageCount = {3})
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         snackbarHost = {
-        SnackbarHost(hostState = snackbarHostState)
+        SnackbarHost(hostState = snackbarHostState){ data ->
+            // custom snackbar with the custom colors
+            Snackbar(
+                contentColor = Color.White,
+                containerColor = Color.Black,
+                //contentColor = ...,
+                snackbarData = data
+            )
+        }
                        },
         bottomBar = {
             EndurelyBottomBar(onItemClick = {
@@ -116,6 +124,8 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
         }
     ) {
         val coroutineScope = rememberCoroutineScope()
+       val viewModel: SettingsViewModel = koinViewModel()
+
        HorizontalPager(pagerState, modifier = Modifier.padding(it),
            userScrollEnabled = false) { page ->
            when(page){
@@ -125,7 +135,15 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                        snackbarHostState.showSnackbar(it)
                    }
                }
-               2 -> SettingsScreen()
+               2 -> SettingsScreen(viewModel){
+                   coroutineScope.launch {
+                       val action =snackbarHostState.showSnackbar("Are sure you want to sign out?", actionLabel = "Sign Out",
+                           duration = SnackbarDuration.Short)
+                       if (action == SnackbarResult.ActionPerformed){
+                           viewModel.signOut()
+                       }
+                   }
+               }
            }
        }
     }
