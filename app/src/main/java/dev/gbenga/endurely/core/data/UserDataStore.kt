@@ -25,4 +25,16 @@ class UserDataStore(private val dataStore: DataStore<Preferences>, private val g
         val data = prefs[userLoginKey]
         data?.let { gson.fromJson(data, LoginResponse::class.java) } ?: throw Exception("User is yet to log in")
     }
+
+    suspend fun clearLogin(){
+        dataStore.edit {
+            it.remove(userLoginKey)
+        }
+    }
+
+    suspend fun clear(){
+        dataStore.edit {
+            it.clear()
+        }
+    }
 }

@@ -13,6 +13,8 @@ data class LoginResponse(
 )
 
 data class Data(
+    @SerializedName("user_id")
+    val userId: Int,
     val username: String,
     @SerializedName("first_name")
     val firstName: String,

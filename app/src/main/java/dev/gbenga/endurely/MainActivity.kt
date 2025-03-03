@@ -6,8 +6,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
@@ -33,25 +39,25 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        //val splashscreen = installSplashScreen()
-        // var keepSplashScreen = true
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-       // splashscreen.setKeepOnScreenCondition { keepSplashScreen }
-//        lifecycleScope.launch {
-//            delay(5000)
-//            keepSplashScreen = false
-//        }
 
         setContent {
             val navHost = rememberEndureNavigation()
             val viewModel : MainActivityViewModel = koinViewModel()
             val maiUiState by viewModel.maiUiState.collectAsStateWithLifecycle()
+            val isSystemInDarkTheme = isSystemInDarkTheme()
 
-            EndurelyTheme {
+            LaunchedEffect(maiUiState.isDarkMode) {
+                WindowCompat.getInsetsController(window, window.decorView)
+                    .isAppearanceLightStatusBars = !(maiUiState.isDarkMode ?: isSystemInDarkTheme)
+            }
+
+            EndurelyTheme(
+                darkTheme = maiUiState.isDarkMode ?: isSystemInDarkTheme
+            ) {
                 NavHost(navController = navHost.navHostController,
                     startDestination = maiUiState.startDestination){
                     composable<Welcome> {

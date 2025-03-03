@@ -21,7 +21,7 @@ class EndureNavigation(val navHostController:  NavHostController) {
         navHostController.navigate(Welcome)
     }
 
-    fun pop() = navHostController.popBackStack()
+    fun pop() = navHostController.navigateUp()
 
 
     fun gotoLogin(onTop: Boolean =false){

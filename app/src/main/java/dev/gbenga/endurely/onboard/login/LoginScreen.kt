@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -60,6 +63,7 @@ fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
 
     val snackbarHostState = remember { SnackbarHostState() }
     GymScaffold(pageTitle = stringResource(R.string.login_title),
+        backIcon = Icons.AutoMirrored.Filled.ExitToApp,
         snackbarHostState = snackbarHostState,
         onBackRequest = onBackRequest)  {
 
@@ -97,8 +101,9 @@ fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
             var isLoading by remember { mutableStateOf(false) }
 
             AnimatedVisibility(isLoading, modifier = Modifier.constrainAs(loadingInd){
-                bottom.linkTo(parent.bottom,
-                    margin = xXLargePadding)
+//                bottom.linkTo(parent.bottom,
+//                    margin = xXLargePadding)
+                top.linkTo(editTextLayout.bottom, xXLargePadding)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
             }) {
@@ -114,6 +119,7 @@ fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
                         }
                         is UiState.Failure ->{
                             coroutineScope.launch {
+                                Log.d("UiState.Failure", logInUi.message)
                                 snackbarHostState.showSnackbar(logInUi.message)
                                 onErrorRequest()
                             }
@@ -130,10 +136,11 @@ fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
                     onLoginClick(username, password)
                 }, visible = !isLoading,
                     modifier = Modifier.constrainAs(loginBtn){
-                        bottom.linkTo(parent.bottom, margin = xXLargePadding)
+//                        bottom.linkTo(parent.bottom, margin = xXLargePadding)
+                        top.linkTo(editTextLayout.bottom, xXLargePadding)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    }.fillMaxWidth().padding(vertical = xXLargePadding))
+                    }.fillMaxWidth())
             }
 
 

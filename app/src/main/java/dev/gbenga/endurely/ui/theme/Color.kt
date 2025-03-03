@@ -2,9 +2,16 @@ package dev.gbenga.endurely.ui.theme
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import dev.gbenga.endurely.extensions.asBitmap
 
 val Purple80 = Color(0xFFD0BCFF)
@@ -22,6 +29,18 @@ val Pink40 = Color(0xFF7D5260)
 //AD1457
 
 //512DA8
+
+data class AppColor(val defaultCard: Color = Color.White)
+
+@Composable
+fun appColor(darkTheme: Boolean = isSystemInDarkTheme()): AppColor{
+    return remember {
+        when {
+            darkTheme -> AppColor(defaultCard = Color(0xFF2C3E50))
+            else -> AppColor(defaultCard = Color(0XFFECF0F1))
+        }
+    }
+}
 
 object DyColor{
     fun getDominantColor(context: Context, @DrawableRes icRes: Int): Color{

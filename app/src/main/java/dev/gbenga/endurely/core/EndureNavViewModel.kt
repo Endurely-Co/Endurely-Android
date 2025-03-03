@@ -5,13 +5,39 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.gbenga.endurely.onboard.data.RepoState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
 abstract class EndureNavViewModel( savedStateHandle: SavedStateHandle? = null) : ViewModel() {
 
-    fun runInScope(run: suspend () -> Unit): Job = viewModelScope.launch { run() }
+    inline fun runInScope(crossinline run: suspend () -> Unit): Job = viewModelScope.launch { run() }
+
+
+    protected suspend fun <T> repoToVMState(block: suspend () -> RepoState<T>): UiState<T>{
+        return when(val userRoutines = block()){
+            is RepoState.Success ->{
+                UiState.Success(userRoutines.data)
+            }
+            is RepoState.Error ->{
+                UiState.Failure(userRoutines.errorMsg)
+            }
+
+        }
+    }
+
+    protected fun <T> repoToVMState(userRoutines: RepoState<T>): UiState<T>{
+        return when(userRoutines){
+            is RepoState.Success ->{
+                UiState.Success(userRoutines.data)
+            }
+            is RepoState.Error ->{
+                UiState.Failure(userRoutines.errorMsg)
+            }
+
+        }
+    }
 
     open fun clearState(){}
 }

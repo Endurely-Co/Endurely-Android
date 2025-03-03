@@ -1,6 +1,7 @@
 package dev.gbenga.endurely
 
 import dev.gbenga.endurely.core.EndureNavViewModel
+import dev.gbenga.endurely.dashboard.SettingsRepository
 import dev.gbenga.endurely.navigation.Dashboard
 import dev.gbenga.endurely.navigation.Login
 import dev.gbenga.endurely.navigation.Welcome
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class MainActivityViewModel(
-    private val onboardRepository: OnboardRepository
+    private val onboardRepository: OnboardRepository,
+    private val settingsRepository: SettingsRepository
 ): EndureNavViewModel() {
 
 
@@ -28,8 +30,15 @@ class MainActivityViewModel(
                     } else{
                         Welcome
                     }
-                ) }
+                )}
 
+            }
+        }
+        runInScope {
+            settingsRepository.theme().collect{ isDarkMode ->
+                _maiUiState.update {
+                    it.copy(isDarkMode = isDarkMode)
+                }
             }
         }
 

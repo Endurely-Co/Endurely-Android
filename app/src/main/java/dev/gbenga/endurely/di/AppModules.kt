@@ -24,7 +24,7 @@ val appModule = module {
             .addInterceptor(ApiInterceptor())
             .build()
         Retrofit.Builder()
-            .baseUrl(ApiEndpoint.baseUrl)
+            .baseUrl(ApiEndpoint.BASE_URL)
             .client(client)
 
             .addConverterFactory(GsonConverterFactory.create())
@@ -32,10 +32,11 @@ val appModule = module {
     }
 
     single { Gson() }
+    single<DataStore<Preferences>> { get<Context>().dataStore }
 
     single {
-        UserDataStore(get<Context>().dataStore, get())
+        UserDataStore(get(), get())
     }
 
-    single { MainActivityViewModel(get()) }
+    single { MainActivityViewModel(get(), get()) }
 }

@@ -13,15 +13,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Color.White, // Purple80,
-    secondary = Color.White, //PurpleGrey80
+    primary =  Purple80,
+    secondary = PurpleGrey80,
     tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Color.White, // Purple40,
-    secondary = Color.White, // PurpleGrey40,
-    tertiary = Pink40
+    primary = Purple40,
+    secondary =  PurpleGrey40,
+    tertiary = Pink40,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -52,9 +52,11 @@ fun EndurelyTheme(
     }
 
 
+
+
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = TypographyConfig(darkTheme),
         content = content
     )
 }

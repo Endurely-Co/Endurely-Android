@@ -7,4 +7,9 @@ fun  Array<String>.hasNChars(n: Int): Boolean{
     return filter { it.hasNChars(n) }.size == temp.size
 }
 
+fun String.titleCase(): String{
+
+    return "${this[0].uppercase()}${this.substring(1).lowercase()}"
+}
+
 fun hasEmptyString(vararg strings: String) = strings.filter { it.trim().isEmpty() }.size == strings.size

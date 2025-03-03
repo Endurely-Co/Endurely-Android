@@ -13,4 +13,8 @@ object Tokens {
     const val completedExcercise = "Completed Exercise"
     const val trackCalories = "Track\nCalories"
     const val loginSuccessful ="Login was successful"
+    const val darkMode = "Dark mode"
+    const val lightMode = "Light mode"
+    const val darkModeDescrip ="Change to light mode"
+    const val lightModeDescrip = "Change to dark mode"
 }

@@ -138,5 +138,5 @@ fun PreviewDashboardScreenContent(){
         DashboardMenu(title = Tokens.trackCalories,
             bgColor = 0xFFE3C1A5.toInt(),
             clipArt = R.drawable.calorie_tracker_ic)
-    ))){}
+    )), onClickItem = {}){}
 }

@@ -9,7 +9,7 @@ class Greeting {
         return calendar[Calendar.HOUR_OF_DAY].let { hour ->
             "Good ${when (hour) {
                 in 0..< 12 -> {
-                    return "morning"
+                    "morning"
                 }
                 in 12..<17 -> {
                     "afternoon"
