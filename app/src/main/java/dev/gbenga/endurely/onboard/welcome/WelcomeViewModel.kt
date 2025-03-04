@@ -5,6 +5,7 @@ import android.graphics.Color
 import androidx.lifecycle.SavedStateHandle
 import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.EndureNavAppViewModel
+import dev.gbenga.endurely.ui.theme.FitnessBlue
 import dev.gbenga.endurely.ui.theme.Maroon
 import dev.gbenga.endurely.ui.theme.Purple
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,13 +23,13 @@ class WelcomeViewModel(savedStateHandle: SavedStateHandle, private val app: Appl
             it.copy(welcomeContent = listOf(
                 WelcomeContent(
                     title = "Meet Your Goals",
-                    clipArt = R.drawable.gym_guy,
+                    clipArt = R.drawable.gym_girl,
                     colorInt = Purple.toInt(),
                     description = "Choose your preferred location and do your workouts anytime that suits you"
                 ),
                 WelcomeContent(
                     title = "Workout Anywhere",
-                    clipArt = R.drawable.fitness_girl2,
+                    clipArt = R.drawable.fitness_girl3,
                     colorInt = Maroon.toInt(),
                     description = "Choose your preferred location and do your workouts anytime that suits you"
             )

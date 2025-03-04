@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.gbenga.endurely.R
+import dev.gbenga.endurely.ui.theme.Orange
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,8 +44,7 @@ fun GymScaffold(pageTitle: String? = null,
                 // custom snackbar with the custom colors
                 Snackbar(
                     contentColor = Color.White,
-                    containerColor = Color.Black,
-                    //contentColor = ...,
+                    containerColor = Color(Orange),
                     snackbarData = data
                 )
             }

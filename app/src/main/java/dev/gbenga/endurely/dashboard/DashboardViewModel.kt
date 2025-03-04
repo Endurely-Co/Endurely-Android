@@ -24,8 +24,10 @@ class DashboardViewModel(private val dashboardRepository: DashboardRepository, p
         runInScope {
 
             dashboardRepository.getUser().let{ loginData ->
-                _dashboardUi.update { it.copy(
-                    fullName = UiState.Success(loginData.data.firstName.titleCase())) }
+                if (loginData is RepoState.Success) {
+                    _dashboardUi.update { it.copy(
+                        fullName = UiState.Success(loginData.data.data.firstName.titleCase())) }
+                }
             }
 
 

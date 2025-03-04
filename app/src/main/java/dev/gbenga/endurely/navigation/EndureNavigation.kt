@@ -23,6 +23,7 @@ class EndureNavigation(val navHostController:  NavHostController) {
 
     fun pop() = navHostController.navigateUp()
 
+    fun gotoRoutineDetails() = navHostController.navigate(RoutineDetail)
 
     fun gotoLogin(onTop: Boolean =false){
         if (onTop){

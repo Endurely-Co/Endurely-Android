@@ -44,6 +44,7 @@ import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.main.EndurelyBottomBar
 import dev.gbenga.endurely.navigation.EndureNavigation
 import dev.gbenga.endurely.routines.RoutinesScreen
+import dev.gbenga.endurely.ui.theme.Orange
 import dev.gbenga.endurely.ui.theme.Purple
 import dev.gbenga.endurely.ui.theme.largePadding
 import kotlinx.coroutines.launch
@@ -66,7 +67,11 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
             else -> {/*Nothing*/}
         }
     }
-    DashboardScreenContent(dashboardUi,){
+    DashboardScreenContent(dashboardUi, signOutRequest={
+        nav.gotoLogin(onTop = true)
+    }, onItemClick ={
+        nav.gotoRoutineDetails()
+    }){
         nav.gotoWelcome()
     }
 }
@@ -74,7 +79,10 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreenContent(dashboardUiState: DashboardUiState, onInValidUser: () -> Unit,){
+fun DashboardScreenContent(dashboardUiState: DashboardUiState,
+                           signOutRequest: () -> Unit,
+                           onItemClick: (Int) -> Unit,
+                           onInValidUser: () -> Unit,){
     val pagerState = rememberPagerState(pageCount = {3})
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -85,7 +93,8 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState, onInValidUser: ()
             // custom snackbar with the custom colors
             Snackbar(
                 contentColor = Color.White,
-                containerColor = Color.Black,
+                containerColor = Color(Purple),
+                actionColor = Color.Red,
                 //contentColor = ...,
                 snackbarData = data
             )
@@ -130,7 +139,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState, onInValidUser: ()
            userScrollEnabled = false) { page ->
            when(page){
                0 -> DashboardScreenList(dashboardUiState, onInValidUser)
-               1 -> RoutinesScreen{
+               1 -> RoutinesScreen(onItemClick = onItemClick){
                    coroutineScope.launch {
                        snackbarHostState.showSnackbar(it)
                    }
@@ -141,6 +150,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState, onInValidUser: ()
                            duration = SnackbarDuration.Short)
                        if (action == SnackbarResult.ActionPerformed){
                            viewModel.signOut()
+                           signOutRequest()
                        }
                    }
                }

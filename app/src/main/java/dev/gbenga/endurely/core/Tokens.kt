@@ -15,8 +15,8 @@ object Tokens {
     const val loginSuccessful ="Login was successful"
     const val darkMode = "Dark mode"
     const val lightMode = "Light mode"
-    const val darkModeDescrip ="Change to light mode"
-    const val lightModeDescrip = "Change to dark mode"
+    const val darkModeDescrip ="Toggle to change light mode"
+    const val lightModeDescrip = "Toggle to change dark mode"
     const val signOut = "Log out"
     const val signOutDescrip = "Sign out now from endurely"
 }

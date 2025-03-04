@@ -42,39 +42,45 @@ import dev.gbenga.endurely.ui.theme.smallPadding
 import dev.gbenga.endurely.ui.theme.xXLargePadding
 
 @Composable
-fun RoutineUiItem(routine: RoutineData, index: Int,  isDarkMode: Boolean){
+fun RoutineUiItem(routine: RoutineData, index: Int,
+                  isDarkMode: Boolean, onItemClick: (Int) -> Unit){
     Card(modifier = Modifier.padding(horizontal = normalPadding)
         .fillMaxWidth()
         .clip(RoundedCornerShape(normalRadius))
         //.background(appColor(isDarkMode).defaultCard)
-        .height(menuCardHeight).padding(horizontal = normalPadding, vertical = normalPadding)
+        .height(menuCardHeight)
+        .padding(horizontal = normalPadding, vertical = normalPadding)
         .clickable {
-
+            onItemClick(index)
         },
         elevation = 1.dp, shape = RoundedCornerShape(normalRadius),
         backgroundColor = appColor(isDarkMode).defaultCard
     ) {
-        ConstraintLayout(modifier = Modifier){
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()){
             val (imageBlock, textBlock) = createRefs()
-            LazyColumn(modifier = Modifier.padding(normalPadding).constrainAs(textBlock){
-                start.linkTo(parent.start,)
+            LazyColumn(modifier = Modifier//.padding(normalPadding)
+                .constrainAs(textBlock){
+                start.linkTo(parent.start)
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
-                end.linkTo(imageBlock.start, margin = largePadding)
-            }, verticalArrangement = Arrangement.spacedBy(5.dp)) {
+                end.linkTo(imageBlock.start)
+            }.fillMaxWidth(.5f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 item {
+
                     Text(routine.routineName,
-                        style = MaterialTheme.typography.titleLarge.copy(), maxLines = 1,
-                        overflow = TextOverflow.Ellipsis)
+                        style = MaterialTheme.typography.titleLarge
+                            .copy(), maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth())
                     Text(routine.routineRepsStr(), style = MaterialTheme.typography.bodyMedium,)
-                    Text(routine.duration(), style = MaterialTheme.typography.bodyMedium,)
+                    Text(routine.totalDuration(), style = MaterialTheme.typography.bodyMedium,)
                 }
                 item {
                     // num of exercises completed - to be updated
-                    Text("3/${routine.routineReps}", style = MaterialTheme.typography.bodySmall, maxLines = 1,
+                    Text(routine.getCompleted(), style = MaterialTheme.typography.bodySmall, maxLines = 1,
                     ) // NAME of the exercise
-                    LinearProgressIndicator(progress = 3/routine.routineReps.toFloat(),  modifier = Modifier
-                        .height(7.dp).fillMaxWidth(.5f))
+                    LinearProgressIndicator(progress = routine.progress(),  modifier = Modifier
+                        .height(7.dp).fillMaxWidth())
                 }
             }
 

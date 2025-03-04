@@ -24,8 +24,9 @@ val Pink40 = Color(0xFF7D5260)
 
 
 @ColorInt const val Orange: Long = 0XFFFD9491
-@ColorInt const val Purple: Long = 0XFF512DA8
-@ColorInt const val Maroon: Long = 0XFFAD1457
+@ColorInt const val FitnessBlue: Long = 0XFFE53935
+@ColorInt const val Purple: Long = 0XFF8E24AA //1565C0
+@ColorInt const val Maroon: Long = 0XFFD84315
 //AD1457
 
 //512DA8
