@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -67,6 +68,7 @@ fun CollapsedTopBar(
 @Composable
 fun BoxLibrary(onBackRequest: () -> Unit, content: @Composable () -> Unit) {
     Scaffold(
+        backgroundColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(title = {
                 Text("Routine Goals")
@@ -87,7 +89,7 @@ fun BoxLibrary(onBackRequest: () -> Unit, content: @Composable () -> Unit) {
                 isFirstItemHidden || listState.firstVisibleItemIndex > 0
             }
         }
-        Box(modifier = Modifier.padding(it)) {
+        Column(modifier = Modifier.padding(it)) {
             content()
         }
     }

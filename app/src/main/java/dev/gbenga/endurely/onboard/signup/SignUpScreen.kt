@@ -41,7 +41,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SigUpScreen (nav: EndureNavigation, viewModel: SignUpViewModel = koinViewModel()){
     val signUpUi by viewModel.signUpState.collectAsStateWithLifecycle()
     SigUpScreenContent(buttonText = signUpUi.buttonText, signUpUi = signUpUi,  onBackRequest ={
-        nav.navUp()
+        nav.pop()
     }, signUpRequest ={
         nav.gotoLogin()
         viewModel.clearState()

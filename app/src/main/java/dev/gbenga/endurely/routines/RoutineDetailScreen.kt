@@ -122,9 +122,10 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
 
 @Composable
 fun RoutineDetailItem(userExercise: UserExercise){
-    Card(modifier = Modifier.clickable {
+    Card(modifier = Modifier.fillMaxWidth().height(120.dp).padding(normalPadding)
+        .clickable {
 
-    }.fillMaxWidth().height(120.dp).padding(normalPadding),
+    }, shape = RoundedCornerShape(normalRadius),
         elevation = CardDefaults.cardElevation(3.dp)) {
         ConstraintLayout(modifier = Modifier
             .padding(normalPadding).fillMaxWidth().height(120.dp)) {
