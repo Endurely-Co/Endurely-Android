@@ -13,6 +13,8 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import dev.gbenga.endurely.dashboard.DashboardScreen
 import dev.gbenga.endurely.navigation.Dashboard
 import dev.gbenga.endurely.navigation.Login
@@ -65,7 +67,12 @@ class MainActivity : ComponentActivity() {
 
                     composable<Dashboard> { DashboardScreen(navHost) }
 
-                    composable<RoutineDetail> { RoutineDetailScreen(navHost) }
+                    composable<RoutineDetail>(
+
+                    ) {
+                        val args = it.toRoute<RoutineDetail>()
+                        RoutineDetailScreen(navHost, routineId = args.routineId,
+                            title = args.pageTitle) }
                 }
             }
         }

@@ -13,7 +13,12 @@ class RoutineRepository(private val routinesService: RoutinesService,
     private suspend fun getUser() = userDataStore.login.first ().data
 
     suspend fun getUserRoutines() = repoContext(){
-        routinesService.getRoutinesByUserId(getUser().userId).data
+        routinesService.getRoutinesByUserId(getUser().userId)
+    }
+
+    suspend fun getUserRoutineById(routineId: String) = repoContext(){
+
+        routinesService.getRoutinesById(getUser().userId, routineId)
     }
 
     suspend fun getExercises() = repoContext {

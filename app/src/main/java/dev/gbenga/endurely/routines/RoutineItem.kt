@@ -4,8 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,32 +17,25 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.gbenga.endurely.R
 import dev.gbenga.endurely.routines.data.RoutineData
-import dev.gbenga.endurely.ui.theme.Orange
 import dev.gbenga.endurely.ui.theme.appColor
-import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.menuCardHeight
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.routineImageHeight
 import dev.gbenga.endurely.ui.theme.routineImageWidth
-import dev.gbenga.endurely.ui.theme.smallPadding
-import dev.gbenga.endurely.ui.theme.xXLargePadding
 
 @Composable
-fun RoutineUiItem(routine: RoutineData, index: Int,
+fun RoutineUiItem(modifier: Modifier, routine: RoutineData, index: Int,
                   isDarkMode: Boolean, onItemClick: (Int) -> Unit){
-    Card(modifier = Modifier.padding(horizontal = normalPadding)
+    Card(modifier = modifier.padding(horizontal = normalPadding)
         .fillMaxWidth()
         .clip(RoundedCornerShape(normalRadius))
         //.background(appColor(isDarkMode).defaultCard)

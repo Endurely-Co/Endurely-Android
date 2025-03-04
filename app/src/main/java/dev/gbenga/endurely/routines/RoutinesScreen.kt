@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.routines
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,7 +38,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun RoutinesScreen(
     viewModel: RoutinesViewModel = koinViewModel(),
-    onItemClick: (Int) -> Unit,
+    onItemClick: (String, String) -> Unit,
     showMessage: (String) -> Unit,) {
 
     val routineUi by viewModel.routinesUi.collectAsStateWithLifecycle()
@@ -53,7 +55,7 @@ fun RoutinesScreen(
 @Composable
 fun RoutinesContent(routineUi: RoutineUiState,
                     showMessage: (String) -> Unit,
-                    onRefresh: () -> Unit,  onItemClick: (Int) -> Unit,
+                    onRefresh: () -> Unit,  onItemClick: (String, String) -> Unit,
                     onResetUiState: () -> Unit){
     var errMessage by remember { mutableStateOf("") }
     val pullToRefreshState = rememberPullRefreshState(refreshing = false, onRefresh = {
@@ -83,15 +85,22 @@ fun RoutinesContent(routineUi: RoutineUiState,
                                 end.linkTo(parent.end)
                             })
                     }else{
+                        var prevIndex by remember { mutableIntStateOf(0) }
                         LazyColumn(modifier = Modifier.constrainAs(routineBlock){
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }.fillMaxSize().padding(vertical = largePadding)) {
-                            items(routines.size){
-                                RoutineUiItem(routines[it], it,
-                                    routineUi.isDarkMode ?: isSystemInDarkTheme(), onItemClick = onItemClick)
+                            items(routines.size){ index ->
+                                AnimatedVisibility(prevIndex != index) {
+                                    RoutineUiItem(modifier = Modifier, routines[index], index,
+                                        routineUi.isDarkMode ?: isSystemInDarkTheme(),
+                                        onItemClick = {
+                                            onItemClick(routines[index].routineId, routines[index].routineName)
+                                        })
+                                }
+                                prevIndex = index
                             }
                         }
                     }

@@ -9,4 +9,4 @@ interface Screens
 @Serializable object Dashboard: Screens
 @Serializable object Settings: Screens
 @Serializable object GymRoutine: Screens
-@Serializable object RoutineDetail : Screens
+@Serializable data class RoutineDetail(val routineId: String, val pageTitle: String) : Screens

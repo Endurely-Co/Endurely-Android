@@ -90,7 +90,7 @@ data class UserExercise(
     val completed: Boolean
 ){
 
-    val status = if (completed) {
+    fun status() = if (completed) {
         "Completed"
     }else{
         "In Progress"
@@ -106,6 +106,7 @@ data class Exercise(
 
 
 fun String.duration(): String {
+    if (this.isEmpty()) return ""
     val durations = split(":")
     var humanTime = ""
     if (durations[0] != "00") {

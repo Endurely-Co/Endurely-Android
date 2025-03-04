@@ -13,7 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -61,11 +65,13 @@ fun CollapsedTopBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BoxLibrary(content: @Composable () -> Unit) {
+fun BoxLibrary(onBackRequest: () -> Unit, content: @Composable () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(title = {
-                Text("Library")
+                Text("Routine Goals")
+            }, navigationIcon = {
+                BackNavigationButton(onBackRequest)
             })
         }
     ) {
@@ -87,3 +93,15 @@ fun BoxLibrary(content: @Composable () -> Unit) {
     }
 }
 
+
+@Composable
+fun BackNavigationButton(onBackRequest: (() -> Unit)? = null){
+    IconButton(onClick = {
+        onBackRequest?.invoke()
+    }) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = null
+        )
+    }
+}

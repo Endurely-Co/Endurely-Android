@@ -27,8 +27,13 @@ class RoutinesViewModel(private val routineRepository : RoutineRepository,
     fun getRoutinesByUserId(){
         _routinesUi.update { it.copy(routines = UiState.Loading()) }
         runInScope {
-            _routinesUi.update { it.copy(routines = repoToVMState {
-                routineRepository.getUserRoutines() })
+            when(val routines =routineRepository.getUserRoutines()){
+                is RepoState.Success ->{
+                    _routinesUi.update { it.copy(routines = UiState.Success(routines.data.data)) }
+                }
+                is RepoState.Error ->{
+                    _routinesUi.update { it.copy(routines = UiState.Failure(routines.errorMsg)) }
+                }
             }
         }
     }

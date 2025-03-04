@@ -69,8 +69,8 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
     }
     DashboardScreenContent(dashboardUi, signOutRequest={
         nav.gotoLogin(onTop = true)
-    }, onItemClick ={
-        nav.gotoRoutineDetails()
+    }, onItemClick ={ routineId, title ->
+        nav.gotoRoutineDetails(routineId, title)
     }){
         nav.gotoWelcome()
     }
@@ -81,7 +81,7 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
 @Composable
 fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                            signOutRequest: () -> Unit,
-                           onItemClick: (Int) -> Unit,
+                           onItemClick: (String, String) -> Unit,
                            onInValidUser: () -> Unit,){
     val pagerState = rememberPagerState(pageCount = {3})
     val coroutineScope = rememberCoroutineScope()

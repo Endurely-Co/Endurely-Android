@@ -40,7 +40,7 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen (nav: EndureNavigation, viewModel: LoginViewModel = koinViewModel()){
     val loginInUi by viewModel.loginUiState.collectAsStateWithLifecycle()
     LoginScreenContent(buttonText = loginInUi.buttonText, onBackRequest ={
-        nav.pop()
+        nav.navUp()
         Log.d("LoginScreen", "--> LoginScreen")
     }, logInUi = loginInUi, loginRequest = {
         // Open the dashboard

@@ -41,5 +41,5 @@ val onboardModule = module {
     viewModel { SettingsViewModel(get()) }
     single { RoutineRepository(get(), get(), get()) }
     viewModel { RoutinesViewModel(get(), get()) }
-    viewModel { RoutineDetailViewModel() }
+    viewModel { RoutineDetailViewModel(get()) }
 }

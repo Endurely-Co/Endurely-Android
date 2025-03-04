@@ -65,7 +65,7 @@ fun DashboardScreenList(dashboardUiState: DashboardUiState, onInValidUser: () ->
                     .shadow(
                         shape = RectangleShape, elevation = 3.dp,
                         spotColor = bgColor
-                    )
+                    ).animateItem()
 
                     .background(Color((menus[index].bgColor)))
                     .fillMaxWidth()
@@ -138,5 +138,5 @@ fun PreviewDashboardScreenContent(){
         DashboardMenu(title = Tokens.trackCalories,
             bgColor = 0xFFE3C1A5.toInt(),
             clipArt = R.drawable.calorie_tracker_ic)
-    )), signOutRequest = {}, onItemClick = {}){}
+    )), signOutRequest = {}, onItemClick = {a, b ->}){}
 }
