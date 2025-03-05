@@ -7,6 +7,7 @@ import dev.gbenga.endurely.core.Tokens
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.extensions.titleCase
 import dev.gbenga.endurely.onboard.data.RepoState
+import dev.gbenga.endurely.routines.DashboardPages
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,7 +27,9 @@ class DashboardViewModel(private val dashboardRepository: DashboardRepository, p
             dashboardRepository.getUser().let{ loginData ->
                 if (loginData is RepoState.Success) {
                     _dashboardUi.update { it.copy(
-                        fullName = UiState.Success(loginData.data.data.firstName.titleCase())) }
+                        fullName = UiState.Success(loginData.data.data.firstName.titleCase()),
+                        userInitial = loginData.data.data.firstName.first().uppercase()
+                    ) }
                 }
             }
 
@@ -51,6 +54,11 @@ class DashboardViewModel(private val dashboardRepository: DashboardRepository, p
             )
         }
 
+    }
+
+    fun showAddRoutine(page: Int){
+        Log.d("showAddRoutine", "$page")
+        _dashboardUi.update { it.copy(showAddRoutine = page == DashboardPages.GYM_ROUTINE) }
     }
 
 

@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,8 +68,15 @@ fun CollapsedTopBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BoxLibrary(onBackRequest: () -> Unit, content: @Composable () -> Unit) {
+fun BoxLibrary(onRemoveRequest: () -> Unit, onBackRequest: () -> Unit, content: @Composable () -> Unit) {
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                onRemoveRequest()
+            }) {
+                Icon(Icons.Default.Delete, contentDescription = "Remove routine")
+            }
+        },
         backgroundColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(title = {

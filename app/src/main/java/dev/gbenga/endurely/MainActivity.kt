@@ -8,7 +8,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
@@ -45,6 +47,7 @@ class MainActivity : ComponentActivity() {
             val viewModel : MainActivityViewModel = koinViewModel()
             val maiUiState by viewModel.maiUiState.collectAsStateWithLifecycle()
             val isSystemInDarkTheme = isSystemInDarkTheme()
+            val isDarkMode by remember { derivedStateOf { maiUiState.isDarkMode ?: isSystemInDarkTheme } }
 
             LaunchedEffect(maiUiState.isDarkMode) {
                 WindowCompat.getInsetsController(window, window.decorView)
@@ -52,7 +55,7 @@ class MainActivity : ComponentActivity() {
             }
 
             EndurelyTheme(
-                darkTheme = maiUiState.isDarkMode ?: isSystemInDarkTheme
+                darkTheme = isDarkMode
             ) {
                 NavHost(navController = navHost.navHostController,
                     startDestination = maiUiState.startDestination){
@@ -60,12 +63,12 @@ class MainActivity : ComponentActivity() {
                         WelcomeScreen(navHost)
                     }
                     composable<Login> {
-                        LoginScreen(navHost)
+                        LoginScreen(navHost, isDarkMode = maiUiState.isDarkMode ?: isSystemInDarkTheme())
                     }
 
                     composable<SignUp> { SigUpScreen(navHost) }
 
-                    composable<Dashboard> { DashboardScreen(navHost) }
+                    composable<Dashboard> { DashboardScreen(navHost, isDarkMode) }
 
                     composable<RoutineDetail>(
 

@@ -1,6 +1,5 @@
 package dev.gbenga.endurely.dashboard
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,10 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -138,5 +133,6 @@ fun PreviewDashboardScreenContent(){
         DashboardMenu(title = Tokens.trackCalories,
             bgColor = 0xFFE3C1A5.toInt(),
             clipArt = R.drawable.calorie_tracker_ic)
-    )), signOutRequest = {}, onItemClick = {a, b ->}){}
+    )), signOutRequest = {}, onItemClick = {a, b ->}, addRoutineRequest = {}, onPageChanged = {},
+        isDarkTheme = false){}
 }

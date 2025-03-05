@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.navigation.EndureNavigation
+import dev.gbenga.endurely.navigation.SignUp
 import dev.gbenga.endurely.ui.buttons.EndureButton
 import dev.gbenga.endurely.ui.buttons.EndurelyTextField
 import dev.gbenga.endurely.ui.buttons.GymScaffold

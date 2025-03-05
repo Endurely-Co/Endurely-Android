@@ -2,14 +2,21 @@ package dev.gbenga.endurely.dashboard
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +42,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,16 +50,20 @@ import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.Tokens
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.main.EndurelyBottomBar
+import dev.gbenga.endurely.navigation.Dashboard
 import dev.gbenga.endurely.navigation.EndureNavigation
+import dev.gbenga.endurely.routines.DashboardPages
 import dev.gbenga.endurely.routines.RoutinesScreen
 import dev.gbenga.endurely.ui.theme.Orange
 import dev.gbenga.endurely.ui.theme.Purple
+import dev.gbenga.endurely.ui.theme.appColor
 import dev.gbenga.endurely.ui.theme.largePadding
+import dev.gbenga.endurely.ui.theme.normalPadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinViewModel()) {
+fun DashboardScreen(nav: EndureNavigation, isDarkTheme: Boolean, viewModel: DashboardViewModel = koinViewModel()) {
     val dashboardUi by viewModel.dashboardUi.collectAsStateWithLifecycle()
     val signOut by viewModel.signOut.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -70,7 +82,12 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
     DashboardScreenContent(dashboardUi, signOutRequest={
         nav.gotoLogin(onTop = true)
     }, onItemClick ={ routineId, title ->
+        Log.d("routineId", routineId)
         nav.gotoRoutineDetails(routineId, title)
+    }, onPageChanged = {
+        viewModel.showAddRoutine(it)
+    }, isDarkTheme = isDarkTheme, addRoutineRequest = {
+        // add routine
     }){
         nav.gotoWelcome()
     }
@@ -80,20 +97,42 @@ fun DashboardScreen(nav: EndureNavigation, viewModel: DashboardViewModel = koinV
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreenContent(dashboardUiState: DashboardUiState,
+                           isDarkTheme: Boolean,
                            signOutRequest: () -> Unit,
+                           onPageChanged: (Int) -> Unit,
                            onItemClick: (String, String) -> Unit,
-                           onInValidUser: () -> Unit,){
+                           addRoutineRequest: () -> Unit,
+                           onInValidUser: () -> Unit,
+                           ){
     val pagerState = rememberPagerState(pageCount = {3})
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(pagerState.currentPage) {
+        onPageChanged(pagerState.currentPage)
+    }
+
+
     Scaffold(
+        floatingActionButton = {
+            AnimatedVisibility (dashboardUiState.showAddRoutine, enter = fadeIn()) {
+                ExtendedFloatingActionButton(onClick = {
+                    addRoutineRequest()
+                }) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(normalPadding)) {
+                        Icon(Icons.Default.Add,
+                            contentDescription = stringResource(R.string.add_new_routine_button))
+                        Text(stringResource(R.string.add_routine))
+                    }
+                }
+            }
+        },
         snackbarHost = {
         SnackbarHost(hostState = snackbarHostState){ data ->
             // custom snackbar with the custom colors
             Snackbar(
                 contentColor = Color.White,
-                containerColor = Color(Purple),
+                containerColor = appColor(isDarkTheme).snackBg,
                 actionColor = Color.Red,
                 //contentColor = ...,
                 snackbarData = data
@@ -115,7 +154,8 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                     Text(
                         dashboardUiState.pageTitles[pagerState.currentPage],
                         style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(horizontal = largePadding)
+                        modifier = Modifier
+                            .padding(horizontal = largePadding)
                             .align(Alignment.BottomStart),
                     )
                 }
@@ -126,7 +166,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                     }
                     .size(80.dp)
                     .padding(horizontal = largePadding) ) {
-                    Text("T", textAlign = TextAlign.Center,
+                    Text(dashboardUiState.userInitial, textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleLarge.copy(color = Color.White), )
                 }
             }, modifier = Modifier.height(80.dp))
@@ -138,19 +178,25 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
        HorizontalPager(pagerState, modifier = Modifier.padding(it),
            userScrollEnabled = false) { page ->
            when(page){
-               0 -> DashboardScreenList(dashboardUiState, onInValidUser)
-               1 -> RoutinesScreen(onItemClick = onItemClick){
-                   coroutineScope.launch {
-                       snackbarHostState.showSnackbar(it)
+               DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUiState, onInValidUser)
+               DashboardPages.GYM_ROUTINE -> {
+                   RoutinesScreen(onItemClick = onItemClick){
+                       coroutineScope.launch {
+                           snackbarHostState.showSnackbar(it)
+                       }
                    }
                }
-               2 -> SettingsScreen(viewModel){
-                   coroutineScope.launch {
-                       val action =snackbarHostState.showSnackbar("Are sure you want to sign out?", actionLabel = "Sign Out",
-                           duration = SnackbarDuration.Short)
-                       if (action == SnackbarResult.ActionPerformed){
-                           viewModel.signOut()
-                           signOutRequest()
+               DashboardPages.SETTINGS -> {
+                   SettingsScreen(viewModel) {
+                       coroutineScope.launch {
+                           val action = snackbarHostState.showSnackbar(
+                               "Are sure you want to sign out?", actionLabel = "Sign Out",
+                               duration = SnackbarDuration.Short
+                           )
+                           if (action == SnackbarResult.ActionPerformed) {
+                               viewModel.signOut()
+                               signOutRequest()
+                           }
                        }
                    }
                }

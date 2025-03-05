@@ -102,6 +102,7 @@ data class Exercise(
     val key: String,
     val name: String,
     val category: String,
+    val description: String
 )
 
 

@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -27,36 +28,23 @@ val Pink40 = Color(0xFF7D5260)
 @ColorInt const val FitnessBlue: Long = 0XFFE53935
 @ColorInt const val Purple: Long = 0XFF8E24AA //1565C0
 @ColorInt const val Maroon: Long = 0XFFD84315
+@ColorInt const val SnackBarDark: Long = 0XFF006064 //B2EBF2
+@ColorInt const val SnackBarLight: Long = 0XFFB2EBF2 //B2EBF2
+//006064
 //AD1457
 
 //512DA8
 
-data class AppColor(val defaultCard: Color = Color.White)
+data class AppColor(val defaultCard: Color = Color.White,
+                    val snackBg: Color = Color(SnackBarDark))
 
 @Composable
 fun appColor(darkTheme: Boolean = isSystemInDarkTheme()): AppColor{
     return remember {
         when {
-            darkTheme -> AppColor(defaultCard = Color(0xFF212121))
-            else -> AppColor(defaultCard = Color(0XFFECF0F1))
+            darkTheme -> AppColor(defaultCard = Color(0xFF212121), snackBg = Color(SnackBarDark))
+            else -> AppColor(defaultCard = Color(0XFFECF0F1), snackBg = Color(SnackBarLight  ))
         }
     }
 }
 
-object DyColor{
-    fun getDominantColor(context: Context, @DrawableRes icRes: Int): Color{
-
-        val newBitmap = Bitmap.createScaledBitmap(icRes.asBitmap(context), 1, 1, true)
-        val color = newBitmap.getPixel(0, 0)
-        newBitmap.recycle()
-        return Color(color)
-    }
-
-    suspend fun getDominantColorInt(context: Context, @DrawableRes icRes: Int): Int{
-
-        val newBitmap = Bitmap.createScaledBitmap(icRes.asBitmap(context), 1, 1, true)
-        val color = newBitmap.getPixel(0, 0)
-        newBitmap.recycle()
-        return color
-    }
-}

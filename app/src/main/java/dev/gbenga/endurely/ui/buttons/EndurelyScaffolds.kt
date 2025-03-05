@@ -1,6 +1,7 @@
 package dev.gbenga.endurely.ui.buttons
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -27,24 +28,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.gbenga.endurely.R
 import dev.gbenga.endurely.ui.theme.Orange
+import dev.gbenga.endurely.ui.theme.appColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GymScaffold(pageTitle: String? = null,
-                snackbarHostState: SnackbarHostState = SnackbarHostState(),
-                backIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                onBackRequest: (() -> Unit)? = null,  content: @Composable () -> Unit){
+fun GymScaffold(
+    isDarkMode: Boolean = isSystemInDarkTheme(),
+    pageTitle: String? = null,
+    snackbarHostState: SnackbarHostState = SnackbarHostState(),
+    backIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+    onBackRequest: (() -> Unit)? = null, content: @Composable () -> Unit){
 
 
     Scaffold (
         snackbarHost = {
-
-
             SnackbarHost(hostState = snackbarHostState) { data ->
                 // custom snackbar with the custom colors
                 Snackbar(
                     contentColor = Color.White,
-                    containerColor = Color(Orange),
+                    containerColor = appColor(isDarkMode).snackBg,
                     snackbarData = data
                 )
             }

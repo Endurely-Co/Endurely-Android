@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gbenga.endurely.R
 import dev.gbenga.endurely.extensions.halfWidthModifier
 import dev.gbenga.endurely.navigation.EndureNavigation
+import dev.gbenga.endurely.navigation.Welcome
 import dev.gbenga.endurely.ui.SlideIndicator
 import dev.gbenga.endurely.ui.buttons.EndureButton
 import dev.gbenga.endurely.ui.buttons.EndureOutlinedButton

@@ -1,38 +1,27 @@
 package dev.gbenga.endurely.routines
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import dev.gbenga.endurely.core.Tokens
 import dev.gbenga.endurely.core.UiState
-import dev.gbenga.endurely.routines.data.RoutineData
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
 import dev.gbenga.endurely.ui.theme.largePadding
-import dev.gbenga.endurely.ui.theme.xXLargePadding
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -85,22 +74,27 @@ fun RoutinesContent(routineUi: RoutineUiState,
                                 end.linkTo(parent.end)
                             })
                     }else{
-                        var prevIndex by remember { mutableIntStateOf(0) }
-                        LazyColumn(modifier = Modifier.constrainAs(routineBlock){
+
+
+                        val rou = rememberCoroutineScope()
+
+                        LazyColumn(
+
+                            modifier = Modifier.constrainAs(routineBlock){
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                        }.fillMaxSize().padding(vertical = largePadding)) {
-                            items(routines.size){ index ->
-                                AnimatedVisibility(prevIndex != index) {
-                                    RoutineUiItem(modifier = Modifier, routines[index], index,
-                                        routineUi.isDarkMode ?: isSystemInDarkTheme(),
-                                        onItemClick = {
-                                            onItemClick(routines[index].routineId, routines[index].routineName)
-                                        })
-                                }
-                                prevIndex = index
+                        }.fillMaxSize().padding(vertical = largePadding),) {
+                            items(routines.size, key = {
+                                it
+                            }){ index ->
+                                RoutineUiItem(modifier = Modifier.animateItem(), routines[index], index,
+                                    routineUi.isDarkMode ?: isSystemInDarkTheme(),
+                                    onItemClick = {
+                                        onItemClick(routines[index].routineId, routines[index].routineName)
+                                    })
+
                             }
                         }
                     }
@@ -114,7 +108,8 @@ fun RoutinesContent(routineUi: RoutineUiState,
                 onResetUiState()
             }
             is UiState.Loading ->{
-                FitnessLoadingIndicator(show = true, modifier = Modifier.constrainAs(loadingBlock){
+                FitnessLoadingIndicator(show = true,
+                    modifier = Modifier.constrainAs(loadingBlock){
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)

@@ -37,10 +37,12 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun LoginScreen (nav: EndureNavigation, viewModel: LoginViewModel = koinViewModel()){
+fun LoginScreen (nav: EndureNavigation,
+                 isDarkMode: Boolean,
+                 viewModel: LoginViewModel = koinViewModel()){
     val loginInUi by viewModel.loginUiState.collectAsStateWithLifecycle()
     LoginScreenContent(buttonText = loginInUi.buttonText, onBackRequest ={
-        nav.pop()
+        nav.gotoWelcome()
         Log.d("LoginScreen", "--> LoginScreen")
     }, logInUi = loginInUi, loginRequest = {
         // Open the dashboard
@@ -48,21 +50,23 @@ fun LoginScreen (nav: EndureNavigation, viewModel: LoginViewModel = koinViewMode
         viewModel.clearState()
     } , onErrorRequest = {
         viewModel.clearState()
-    }){username, password ->
+    }, isDarkMode =isDarkMode){username, password ->
         viewModel.login(username, password)
     }
 
 }
 
 @Composable
-fun LoginScreenContent(buttonText: String, logInUi: LoginUiState,
+fun LoginScreenContent(buttonText: String,
+                       isDarkMode: Boolean,
+                       logInUi: LoginUiState,
                        onBackRequest: () -> Unit,
                        loginRequest: () -> Unit,
                        onErrorRequest: () -> Unit,
                        onLoginClick: (String, String) -> Unit){
 
     val snackbarHostState = remember { SnackbarHostState() }
-    GymScaffold(pageTitle = stringResource(R.string.login_title),
+    GymScaffold(isDarkMode =isDarkMode, pageTitle = stringResource(R.string.login_title),
         backIcon = Icons.AutoMirrored.Filled.ExitToApp,
         snackbarHostState = snackbarHostState,
         onBackRequest = onBackRequest)  {
