@@ -1,9 +1,6 @@
 package dev.gbenga.endurely.routines
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -27,15 +23,18 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -64,14 +63,10 @@ import dev.gbenga.endurely.routines.data.UserExercise
 import dev.gbenga.endurely.routines.data.duration
 import dev.gbenga.endurely.ui.buttons.EndureButton
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
-import dev.gbenga.endurely.ui.theme.Maroon
-import dev.gbenga.endurely.ui.theme.Purple
 import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.smallPadding
-import dev.gbenga.endurely.ui.theme.xLargePadding
-import dev.gbenga.endurely.ui.theme.xXLargePadding
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -106,6 +101,7 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
             viewModel.hideDetails()
         }
 
+        var selected by remember { mutableStateOf(false) }
         LazyColumn (modifier = Modifier,
             state = listState) {
             item {
@@ -116,7 +112,9 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
                     .padding(horizontal = normalPadding)
                     .padding(top = normalPadding).fillMaxWidth(), ) {
                     items(2){
-                        FilterChip()
+                        AppChip(selected= selected){
+                            selected = !selected
+                        }
                     }
                 }
                 var prevIndex by rememberSaveable  { mutableStateOf(-1) }
@@ -225,15 +223,16 @@ private fun ExpandedTopBar(title: String) {
     }
 }
 
-
+// var selected by remember { mutableStateOf(false) }
 @Composable
-fun FilterChip() {
-    var selected by remember { mutableStateOf(false) }
+fun AppChip(modifier: Modifier =Modifier, title: String="New chip",selected: Boolean, enabled: Boolean = true, onSelect: (Boolean) -> Unit) {
+
     FilterChip(
-        modifier = Modifier.padding(horizontal = normalPadding),
+        modifier = modifier.height(40.dp).padding(horizontal = normalPadding),
         selected = selected,
-        onClick = { selected = !selected },
-        label = { Text("Filter chip") },
+        onClick = { onSelect(selected)},
+        enabled = enabled,
+        label = { Text(title) },
         colors = FilterChipDefaults.filterChipColors(selectedLabelColor = MaterialTheme.colorScheme.primary),
     )
 }
@@ -251,17 +250,34 @@ fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
 
     if (showBottomSheet) {
         ModalBottomSheet(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier.fillMaxHeight(.5f),
             sheetState = sheetState,
             onDismissRequest = { onDismissRequest(false) }
         ) {
             ConstraintLayout(
-                modifier = Modifier.scrollable(scrollState, orientation = Orientation.Vertical)
-                    .fillMaxWidth().padding(horizontal = largePadding)
-                    .padding(bottom = largePadding),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = largePadding)
+                    .padding(bottom = largePadding)
+                    .scrollable(scrollState, orientation = Orientation.Vertical)
+
+                    .fillMaxHeight(),
             ) {
 
-                val (button, text) = createRefs()
+                val (button, text, closeBtn) = createRefs()
+
+                IconButton(modifier = Modifier.constrainAs(closeBtn){
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                }.clip(CircleShape).padding(smallPadding).wrapContentSize(),
+                    colors = IconButtonDefaults
+                        .iconButtonColors(containerColor = MaterialTheme
+                            .colorScheme.primary.copy(alpha = .4f),
+                            contentColor = Color.White),
+                    onClick = {
+                    onDismissRequest(false)
+                }) {
+                    Icon(Icons.Default.Clear, contentDescription = "close routine details")
+                }
 
                 Column(modifier = Modifier.constrainAs(text){
                     top.linkTo(parent.top)
@@ -294,7 +310,8 @@ fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
 
                 EndureButton("Mark as Complete",
                     modifier = Modifier.fillMaxWidth().constrainAs(button){
-                        bottom.linkTo(parent.bottom, margin = xXLargePadding)
+                        //top.linkTo(text.bottom, margin = xXLargePadding)
+                        bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }) { }

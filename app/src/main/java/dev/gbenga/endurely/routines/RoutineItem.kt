@@ -24,6 +24,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.gbenga.endurely.R
+import dev.gbenga.endurely.core.rememberDateTimeUtils
+import dev.gbenga.endurely.core.rememberDateUtils
 import dev.gbenga.endurely.routines.data.RoutineData
 import dev.gbenga.endurely.ui.theme.appColor
 import dev.gbenga.endurely.ui.theme.menuCardHeight
@@ -57,13 +59,13 @@ fun RoutineUiItem(modifier: Modifier, routine: RoutineData, index: Int,
                 end.linkTo(imageBlock.start)
             }.fillMaxWidth(.5f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
                 item {
-
+                    val timeUtils = rememberDateUtils()
                     Text(routine.routineName,
                         style = MaterialTheme.typography.titleLarge
                             .copy(), maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.fillMaxWidth())
-                    Text(routine.routineRepsStr(), style = MaterialTheme.typography.bodyMedium,)
+                    Text(timeUtils.reverseServerTime(routine.startDate), style = MaterialTheme.typography.bodyMedium,)
                     Text(routine.totalDuration(), style = MaterialTheme.typography.bodyMedium,)
                 }
                 item {

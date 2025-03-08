@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import dev.gbenga.endurely.dashboard.DashboardScreen
+import dev.gbenga.endurely.navigation.AddNewRoutine
 import dev.gbenga.endurely.navigation.Dashboard
 import dev.gbenga.endurely.navigation.Login
 import dev.gbenga.endurely.navigation.RoutineDetail
@@ -27,6 +28,7 @@ import dev.gbenga.endurely.navigation.rememberEndureNavigation
 import dev.gbenga.endurely.onboard.login.LoginScreen
 import dev.gbenga.endurely.onboard.signup.SigUpScreen
 import dev.gbenga.endurely.onboard.welcome.WelcomeScreen
+import dev.gbenga.endurely.routines.AddNewRoutineScreen
 import dev.gbenga.endurely.routines.RoutineDetailScreen
 import dev.gbenga.endurely.ui.theme.EndurelyTheme
 import org.koin.androidx.compose.koinViewModel
@@ -70,9 +72,11 @@ class MainActivity : ComponentActivity() {
 
                     composable<Dashboard> { DashboardScreen(navHost, isDarkMode) }
 
-                    composable<RoutineDetail>(
+                    composable<AddNewRoutine>(){
+                        AddNewRoutineScreen(navHost, isDarkMode)
+                    }
 
-                    ) {
+                    composable<RoutineDetail>() {
                         val args = it.toRoute<RoutineDetail>()
                         RoutineDetailScreen(navHost, routineId = args.routineId,
                             title = args.pageTitle) }

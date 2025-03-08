@@ -1,6 +1,5 @@
 package dev.gbenga.endurely.routines.data
 
-import android.util.Log
 import com.google.gson.annotations.SerializedName
 
 data class TimeVal(val hrs: Int, val mins: Int, val secs: Int, ){
@@ -28,22 +27,17 @@ data class RoutineResponse(
 
 data class RoutineData(
     val user: Long,
-    @SerializedName("exercises")
-    val userExercises: List<UserExercise>,
     @SerializedName("routine_name")
     val routineName: String,
-    @SerializedName("routine_set")
-    val routineSet: Long,
-    @SerializedName("routine_reps")
-    val routineReps: Long,
-    @SerializedName("routine_duration")
-    val routineDuration: String,
     val completed: Boolean,
+    @SerializedName("start_date")
+    val startDate: String,
+    @SerializedName("created_at")
+    val createdAt: String,
     @SerializedName("routine_id")
     val routineId: String,
+    val exercises: List<UserExercise>,
 ) {
-    fun routineRepsStr() = "$routineReps Reps"
-
 
 
     fun totalDuration(): String {
@@ -51,7 +45,7 @@ data class RoutineData(
         var mins = 0
         var secs = 0
 
-        return userExercises.map { exercise ->
+        return exercises.map { exercise ->
             val durations = exercise.duration.split(":").map { it.toInt() }
 
             hrs += durations[0]
@@ -69,17 +63,17 @@ data class RoutineData(
 
             TimeVal(hrs, mins, secs)
         }.last().let {
-            "${it.hrs()}${it.mins()}${it.secs()}"
+            "${it.hrs()}${it.mins()}"
         }
 
     }
 
 
     fun getCompleted(): String{
-        return "${userExercises.filter { it.completed }.size}/${userExercises.size}"
+        return "${exercises.filter { it.completed }.size}/${exercises.size}"
     }
 
-    fun progress() = userExercises.filter { it.completed }.size / userExercises.size.toFloat()
+    fun progress() = exercises.filter { it.completed }.size / exercises.size.toFloat()
 }
 
 
@@ -96,6 +90,8 @@ data class UserExercise(
         "In Progress"
     }
 }
+
+
 
 data class Exercise(
     val id: Long,
@@ -120,3 +116,4 @@ fun String.duration(): String {
 
     return humanTime
 }
+

@@ -1,0 +1,101 @@
+package dev.gbenga.endurely.core
+
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+
+class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDateInstance(),
+                    private val serverDateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+                        Locale.getDefault()),
+    private val timeFormat: DateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()),
+    private val calendar : Calendar= Calendar.getInstance()) {
+
+    fun getDate(dateInMillis: Long): String {
+        return dateFormat.format(Date(dateInMillis)) ?: ""
+    }
+
+    fun parseDateTime(hour: Int,minute: Int, date: Long) = calendar.apply {
+        timeInMillis = date
+        this[Calendar.MINUTE] = minute
+        this[Calendar.HOUR_OF_DAY] = hour
+    }.timeInMillis
+
+    fun getServerTime(hour: Int,minute: Int, date: Long): String{
+        return serverDateFormat.format(Date(parseDateTime(hour, minute, date)))
+    }
+
+    fun getTime(timeInMillis: Long): String {
+        return timeFormat.format(Date(timeInMillis))
+    }
+
+
+
+    fun getTime(minute: Int, hour: Int): String = calendar.let {
+        Log.d("TimeUtils", "$minute $hour")
+        it[Calendar.MINUTE] = minute
+        it[Calendar.HOUR_OF_DAY] = hour
+        return getTime(it.timeInMillis)
+    }
+
+
+    fun serverDuration(duration: String): String = calendar.let {
+        val timeFormat: DateFormat = SimpleDateFormat("hh:mm:ss", Locale.getDefault())
+        val durationSegs = duration.split(":")
+        it[Calendar.MINUTE] = durationSegs[0].toInt()
+        it[Calendar.HOUR_OF_DAY] = durationSegs[1].toInt()
+        return timeFormat.format(it.time)
+    }
+
+}
+
+class DateUtils( private val serverDateFormat:
+                 DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss",
+        Locale.getDefault()),
+                 private val calendar : Calendar= Calendar.getInstance(),
+                 private val dateTimeUtils: DateTimeUtils = DateTimeUtils()){
+    fun reverseServerTime(timeDate: String): String{
+        val validSeg = timeDate.split(".")
+        return serverDateFormat.parse(validSeg[0]).let {
+            it?.let { date -> dateTimeUtils.getTime(date.time)  } ?: ""
+        }
+    }
+
+    fun reverseServerDate(timeDate: String): String{
+        val validSeg = timeDate.split(".")
+        return serverDateFormat.parse(validSeg[0]).let {
+            it?.let { date -> dateTimeUtils.getDate(date.time)  } ?: ""
+        }
+    }
+
+    fun parse(timeDate: String): Date?{
+        val validSeg = timeDate.split(".")
+        return serverDateFormat.parse(validSeg[0])
+    }
+}
+
+class DateUtilsNames( private val dateUtils: DateUtils,
+                      private val dayNameFormat:
+                      DateFormat = SimpleDateFormat("EEEE",
+                          Locale.getDefault())){
+
+    fun getServerDay(timeDate: String)
+    = dateUtils.parse(timeDate) ?.let {
+        dayNameFormat.format(it)
+    } ?: ""
+
+    fun getToday() = dayNameFormat.format(System.currentTimeMillis())
+}
+
+
+@Composable
+fun rememberDateUtils(): DateUtils = remember { DateUtils() }
+
+@Composable
+fun rememberDateTimeUtils(): DateTimeUtils{
+    return remember { DateTimeUtils() }
+}

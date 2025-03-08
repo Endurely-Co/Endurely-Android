@@ -3,6 +3,8 @@ package dev.gbenga.endurely.ui.buttons
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,6 +39,7 @@ fun GymScaffold(
     pageTitle: String? = null,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
     backIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
+    actions: @Composable RowScope.() -> Unit = {},
     onBackRequest: (() -> Unit)? = null, content: @Composable () -> Unit){
 
 
@@ -51,6 +54,7 @@ fun GymScaffold(
                 )
             }
         },
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             pageTitle?.let { TopAppBar(title = {
                 Text(pageTitle)
@@ -64,10 +68,11 @@ fun GymScaffold(
                         contentDescription = null
                     )
                 }
-            }) }
-        }
+            }, actions = actions) }
+        },
+
     ) {
-        ConstraintLayout(modifier = Modifier.padding(it)) {
+        ConstraintLayout(modifier = Modifier.padding(it).fillMaxSize()) {
             val (image, mainLayout) = createRefs()
             Image(painter = painterResource(R.drawable.white_page_ca),
                 modifier = Modifier.constrainAs(image){

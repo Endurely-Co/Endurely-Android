@@ -15,4 +15,11 @@
     <string name="skip_btn">Skip</string>
     <string name="add_routine">Add Routine</string>
     <string name="add_new_routine_button">Add new routine button</string>
+    <string name="btn_add">Add</string>
+    <string name="btn_remove">Remove</string>
+    <string name="routine_name">Routine name</string>
+    <string name="routine_date">Date</string>
+    <string name="routine_time">Time</string>
+    <string name="lb_hours">Hours</string>
+    <string name="lb_minutes">Minutes</string>
 </resources>

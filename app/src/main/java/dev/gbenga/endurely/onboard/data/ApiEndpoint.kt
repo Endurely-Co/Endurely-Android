@@ -6,6 +6,8 @@ object ApiEndpoint {
     const val ROUTINES = "routines"
     const val USER_ROUTINES = "$ROUTINES/user"
     const val EXERCISES = "$ROUTINES/exercises"
+    const val ADD_ROUTINES = "$ROUTINES/add"
+    //const val DELETE_ROUTINE = "routines/19?routine=23cf0668153e4d18a4a4bc3ab0f7a0f9"
     const val EXERCISES_CATEGORIES = "$ROUTINES/categories"
     const val ROUTINES_ADD = "$ROUTINES/add"
     const val ROUTINES_UPDATE = "$ROUTINES/update"

@@ -88,6 +88,7 @@ fun DashboardScreen(nav: EndureNavigation, isDarkTheme: Boolean, viewModel: Dash
         viewModel.showAddRoutine(it)
     }, isDarkTheme = isDarkTheme, addRoutineRequest = {
         // add routine
+        nav.gotoAddNewRoutine()
     }){
         nav.gotoWelcome()
     }

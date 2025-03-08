@@ -30,6 +30,7 @@ import dev.gbenga.endurely.navigation.SignUp
 import dev.gbenga.endurely.ui.buttons.EndureButton
 import dev.gbenga.endurely.ui.buttons.EndurelyTextField
 import dev.gbenga.endurely.ui.buttons.GymScaffold
+import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.xLargePadding
 import dev.gbenga.endurely.ui.theme.xXLargePadding
@@ -90,7 +91,7 @@ fun SigUpScreenContent(buttonText: String,onBackRequest: () -> Unit,
 
             Column(modifier = Modifier.verticalScroll(verticalScrollState)
                 .constrainAs(editTextLayout){
-                top.linkTo(topLayout.bottom, xXLargePadding)
+                top.linkTo(topLayout.bottom, largePadding)
                 bottom.linkTo(loginBtn.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
@@ -159,12 +160,11 @@ fun SigUpScreenContent(buttonText: String,onBackRequest: () -> Unit,
                     visible = signUp !is UiState.Loading,
                     modifier = Modifier
                         .constrainAs(loginBtn) {
-                            bottom.linkTo(parent.bottom, margin = normalPadding)
+                            bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }
-                        .fillMaxWidth()
-                        .padding(vertical = xXLargePadding))
+                        .fillMaxWidth())
             }
 
 

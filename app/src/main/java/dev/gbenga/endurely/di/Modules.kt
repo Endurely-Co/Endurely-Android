@@ -13,6 +13,8 @@ import dev.gbenga.endurely.onboard.data.OnboardService
 import dev.gbenga.endurely.onboard.login.LoginViewModel
 import dev.gbenga.endurely.onboard.signup.SignUpViewModel
 import dev.gbenga.endurely.onboard.welcome.WelcomeViewModel
+import dev.gbenga.endurely.routines.AddNewRoutineViewModel
+import dev.gbenga.endurely.routines.ExerciseSuggestionsViewModel
 import dev.gbenga.endurely.routines.RoutineDetailViewModel
 import dev.gbenga.endurely.routines.RoutineRepository
 import dev.gbenga.endurely.routines.RoutinesService
@@ -40,6 +42,8 @@ val onboardModule = module {
     viewModel { EndurelyBottomBarViewModel() }
     viewModel { SettingsViewModel(get()) }
     single { RoutineRepository(get(), get(), get()) }
-    viewModel { RoutinesViewModel(get(), get()) }
+    viewModel { RoutinesViewModel(get(), get(), get()) }
     viewModel { RoutineDetailViewModel(get()) }
+    viewModel{ AddNewRoutineViewModel(get(), get(), get()) }
+    viewModel { ExerciseSuggestionsViewModel(get()) }
 }

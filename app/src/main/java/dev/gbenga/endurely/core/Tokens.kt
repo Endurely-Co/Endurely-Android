@@ -19,4 +19,8 @@ object Tokens {
     const val lightModeDescrip = "Toggle to change dark mode"
     const val signOut = "Log out"
     const val signOutDescrip = "Sign out now from endurely"
+    val daysOfWeek = listOf("Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur").map {
+        "${it}day"
+    }
+    val lowercaseDaysOfWeek = daysOfWeek.map { it.lowercase() }
 }

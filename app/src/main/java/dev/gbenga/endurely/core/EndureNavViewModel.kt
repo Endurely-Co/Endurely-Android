@@ -10,6 +10,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
+abstract class NewEndureNavViewModel<T>() : EndureNavViewModel() {
+    abstract val uiField: T
+}
+
 abstract class EndureNavViewModel( savedStateHandle: SavedStateHandle? = null) : ViewModel() {
 
     inline fun runInScope(crossinline run: suspend () -> Unit): Job = viewModelScope.launch { run() }

@@ -12,6 +12,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.gson.Gson
 import dev.gbenga.endurely.MainActivityViewModel
+import dev.gbenga.endurely.core.DateTimeUtils
+import dev.gbenga.endurely.core.DateUtils
+import dev.gbenga.endurely.core.DateUtilsNames
 import dev.gbenga.endurely.core.data.UserDataStore
 
 // At the top level of your kotlin file:
@@ -39,4 +42,7 @@ val appModule = module {
     }
 
     single { MainActivityViewModel(get(), get()) }
+    single { DateTimeUtils() }
+    single { DateUtils() }
+    single { DateUtilsNames(get()) }
 }

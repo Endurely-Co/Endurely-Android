@@ -20,9 +20,17 @@ class ApiInterceptor : Interceptor {
             val newResponse = gson.fromJson(body, Map::class.java)
 
             newResponse["message"]?.let {
-                val apiError =
-                    ApiError(message = newResponse["message"] as String, code = response.code)
-                return response.newBuilder().message(apiError.message).build()
+                if (newResponse["message"] is Map<*, *>){
+                    val errors = newResponse["message"] as Map<String, Any>
+                    Log.d("newResponse", "${newResponse["message"] }")
+                    return response.newBuilder().message("${errors.values}").build()
+
+                }else{
+                    val apiError =
+                        ApiError(message = newResponse["message"] as String, code = response.code)
+                    Log.d("newResponse", "${newResponse["message"] }")
+                    return response.newBuilder().message(apiError.message).build()
+                }
             }
 
             return response.newBuilder().build()

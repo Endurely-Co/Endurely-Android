@@ -2,8 +2,6 @@ package dev.gbenga.endurely.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.lifecycle.asLiveData
-import androidx.navigation.NavGraph
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -53,6 +51,7 @@ class EndureNavigation(val navHostController:  NavHostController) {
 
     fun gotoDashboard() = pop { navHostController.navigate(Dashboard) }
 
+    fun gotoAddNewRoutine() = navHostController.navigate(AddNewRoutine)
 }
 
 // r@T419

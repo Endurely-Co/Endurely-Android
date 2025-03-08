@@ -30,7 +30,7 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
             _routineDetail.update { it.copy(userExercises = UiState.Loading()) }
             when(val routine = routineRepository.getUserRoutineById(routineId)){
                 is RepoState.Success ->{
-                    _routineDetail.update { it.copy(userExercises = UiState.Success(routine.data.data.first().userExercises)) }
+                    _routineDetail.update { it.copy(userExercises = UiState.Success(routine.data.data.first().exercises)) }
                 }
                 is RepoState.Error ->{
                     _routineDetail.update { it.copy(userExercises = UiState.Failure(routine.errorMsg)) }
