@@ -183,7 +183,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
        val viewModel: SettingsViewModel = koinViewModel()
 
        HorizontalPager(pagerState, modifier = Modifier.padding(it),
-           userScrollEnabled = false, beyondViewportPageCount= 3) { page ->
+           userScrollEnabled = false) { page ->
            when(page){
                DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUiState, onInValidUser)
                DashboardPages.GYM_ROUTINE -> {
