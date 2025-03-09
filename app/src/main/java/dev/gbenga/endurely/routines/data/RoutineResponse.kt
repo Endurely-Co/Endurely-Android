@@ -39,6 +39,21 @@ data class RoutineData(
     val exercises: List<UserExercise>,
 ) {
 
+    fun toRequest(exercises: List<UserExercise>): EditRoutineRequest{
+        return EditRoutineRequest(
+            routineName = this.routineName,
+            routineId = this.routineId,
+            exercises = exercises.map { exercise ->
+                RoutineExercise(
+                    duration = exercise.duration,
+                    completed = exercise.completed,
+                    id = exercise.exercise.id,
+                    userExerciseId = exercise.id
+                    )
+            },
+            user = 0
+        )
+    }
 
     fun totalDuration(): String {
         var hrs = 0

@@ -30,9 +30,8 @@ class AddNewRoutineViewModel(private val routineRepository: RoutineRepository,
     init {
         runInScope {
             routineData.collect{ payload ->
-                Log.d("ViewModel#22", "payload: $payload")
                 _addRoutineUi.update { it.copy(enableSubmit = !payload.third.toList().contains(0)
-                        || payload.first.isNotBlank() || payload.second != 0L) }
+                        && payload.first.isNotBlank() && payload.second != 0L) }
             }
         }
     }
@@ -70,6 +69,10 @@ class AddNewRoutineViewModel(private val routineRepository: RoutineRepository,
 
         _addRoutineUi.update {
             it.copy(selectedExercises = updatedList) }
+    }
+
+    override fun clearState() {
+        _addRoutineUi.update { AddNewRoutineState() }
     }
 
     fun submitRoutine() {

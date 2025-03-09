@@ -2,14 +2,12 @@ package dev.gbenga.endurely.routines
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,7 +42,6 @@ import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.core.rememberDateTimeUtils
 import dev.gbenga.endurely.navigation.EndureNavigation
-import dev.gbenga.endurely.routines.data.NewExercise
 import dev.gbenga.endurely.ui.EndurelyDatePicker
 import dev.gbenga.endurely.ui.EndurelyAlertDialog
 import dev.gbenga.endurely.ui.buttons.EndureOutlinedButton
@@ -202,12 +199,14 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
 
     }
 
-    when(val addedNewRoutineUi = addNewRoutineState.addedNewRoutine){
-        is UiState.Success ->{
-            // with message
-            Log.d("addedNewRoutineUi", "_______addedNewRoutineUi")
+    LaunchedEffect(addNewRoutineState.addedNewRoutine) {
+        if (addNewRoutineState.addedNewRoutine is UiState.Success ){
             navigation.pop()
+           // navigation.pop()
         }
+    }
+
+    when(val addedNewRoutineUi = addNewRoutineState.addedNewRoutine){
         is UiState.Failure ->{
             showMessage = addedNewRoutineUi.message
         }

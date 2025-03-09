@@ -1,6 +1,7 @@
 package dev.gbenga.endurely.routines
 
 import android.util.Log
+import com.google.gson.Gson
 import dev.gbenga.endurely.core.Repository
 import dev.gbenga.endurely.core.data.UserDataStore
 import dev.gbenga.endurely.routines.data.AddRoutineRequest
@@ -45,12 +46,12 @@ class RoutineRepository(private val routinesService: RoutinesService,
     }
 
     suspend fun addRoutine(routine: AddRoutineRequest) = repoContext {
-        Log.d("addRoutine", "routine: $routine")
         routinesService.addNewRoutine(routine.copy(user = getUser().userId))
     }
 
     suspend fun editRoutine(routine: EditRoutineRequest) = repoContext {
-        routinesService.editRoutine(getUser().userId, routine)
+        Log.d("addRoutine", "routine: ${Gson().toJson(routine)}")
+        routinesService.editRoutine(getUser().userId, routine.copy(user = getUser().userId))
     }
 
 }

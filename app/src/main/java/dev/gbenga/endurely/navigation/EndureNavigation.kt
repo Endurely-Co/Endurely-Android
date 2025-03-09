@@ -2,8 +2,10 @@ package dev.gbenga.endurely.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import dev.gbenga.endurely.core.Tokens
 
 
 @Composable
@@ -23,6 +25,15 @@ class EndureNavigation(val navHostController:  NavHostController) {
             }
         }
     }
+
+    private val savedStateHandle: SavedStateHandle? = navHostController
+        .previousBackStackEntry
+        ?.savedStateHandle
+
+    fun popAndRefresh(){
+        navHostController.navigate(Dashboard)
+    }
+
 
     fun pop() = navHostController.popBackStack()
 

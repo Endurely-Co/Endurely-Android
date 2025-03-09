@@ -72,5 +72,5 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.material)
-
+    implementation (libs.androidx.runtime.livedata)
 }

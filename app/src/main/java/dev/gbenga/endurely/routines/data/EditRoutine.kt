@@ -18,8 +18,14 @@ data class RoutineExercise(
     val completed: Boolean,
 )
 
+
+
+
+
+// EDIT RESPONSE
+
 data class EditRoutineResponse(
-    val data: Data,
+    val data: EditRoutineData,
 )
 
 data class EditRoutineData(
@@ -34,8 +40,17 @@ data class EditRoutineData(
     val createdAt: String,
     @SerializedName("routine_id")
     val routineId: String,
-    val exercises: List<RoutineExercise>,
+    val exercises: List<EditExercise>,
 )
+
+data class EditExercise(
+    @SerializedName("id") val id: Int,
+    @SerializedName("duration") val duration: String,
+    @SerializedName("completed") val completed: Boolean,
+    @SerializedName("exercise") val exercise: Int
+)
+
+
 
 //data class Exercise(
 //    val id: Long,

@@ -134,5 +134,5 @@ fun PreviewDashboardScreenContent(){
             bgColor = 0xFFE3C1A5.toInt(),
             clipArt = R.drawable.calorie_tracker_ic)
     )), signOutRequest = {}, onItemClick = {a, b ->}, addRoutineRequest = {}, onPageChanged = {},
-        isDarkTheme = false){}
+        isDarkTheme = false, shouldRefreshRoutine = false){}
 }

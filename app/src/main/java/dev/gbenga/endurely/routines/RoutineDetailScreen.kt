@@ -1,6 +1,7 @@
 package dev.gbenga.endurely.routines
 
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,8 +26,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,9 +44,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,6 +58,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -64,10 +73,15 @@ import dev.gbenga.endurely.routines.data.duration
 import dev.gbenga.endurely.ui.buttons.EndureButton
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
 import dev.gbenga.endurely.ui.theme.largePadding
+import dev.gbenga.endurely.ui.theme.menuCardHeight
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.smallPadding
+import dev.gbenga.endurely.ui.theme.thinThickness
+import dev.gbenga.endurely.ui.theme.xLargePadding
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import kotlin.math.floor
 
 
 @Composable
@@ -77,7 +91,8 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
                         viewModel: RoutineDetailViewModel = koinViewModel()){
     val routineDetailUi by viewModel.routineDetail.collectAsStateWithLifecycle()
 
-    Log.d("routineDetailUi", routineId)
+    val exerciseDetailsUi by viewModel.exerciseDetailsUi.collectAsStateWithLifecycle()
+
     val listState = rememberLazyListState()
     var isLoading by remember { mutableStateOf(false) }
 
@@ -85,41 +100,120 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
         viewModel.getRoutineDetails(routineId)
     }
 
-    BoxLibrary(onBackRequest = {
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+
+    FitnessLoadingIndicator(show = isLoading)
+
+    LaunchedEffect(routineDetailUi.deleteRoutine) {
+        when(val deleteRoutine = routineDetailUi.deleteRoutine ){
+            is UiState.Success ->{
+                isLoading = false
+                navigation.pop()
+            }
+            is UiState.Failure ->{
+                isLoading = false
+                scaffoldState.snackbarHostState.showSnackbar(deleteRoutine.message)
+            }
+            is UiState.Loading ->{
+                isLoading = true
+            }
+            else ->{}
+        }
+    }
+
+
+
+    RoutineDetailScaffold(
+        scaffoldState = scaffoldState,
+        onBackRequest = {
         navigation.pop()
     }, onRemoveRequest = {
-
+            coroutineScope.launch {
+                val snackbarState = scaffoldState.snackbarHostState.showSnackbar(
+                    "Confirm you want to delete routine",
+                    actionLabel = "Confirm")
+                if (snackbarState == SnackbarResult.ActionPerformed) {
+                    viewModel.removeRoutine(routineId)
+                }
+            }
     }){
 
 
-        val exerciseDetailsUi by viewModel.exerciseDetailsUi.collectAsStateWithLifecycle()
+        LaunchedEffect(exerciseDetailsUi.markComplete) {
+            when (val markCompleted = exerciseDetailsUi.markComplete) {
+                is UiState.Success -> {
+                    scaffoldState.snackbarHostState.showSnackbar(markCompleted.data)
+                }
+
+                is UiState.Failure -> {
+                    scaffoldState.snackbarHostState.showSnackbar(markCompleted.message)
+                }
+
+                is UiState.Loading -> {
+                    isLoading = true
+                }
+                else ->{}
+            }
+        }
+
 
         RoutineBottomSheet(title = exerciseDetailsUi.title,
             content = exerciseDetailsUi.description,
             duration = exerciseDetailsUi.duration,
-            showBottomSheet = exerciseDetailsUi.show){
+            onMarkComplete = {
+                viewModel.markComplete(it)
+            },
+            showBottomSheet = exerciseDetailsUi.show,
+            isLoading = exerciseDetailsUi.markComplete is UiState.Loading){
             viewModel.hideDetails()
         }
 
-        var selected by remember { mutableStateOf(false) }
+        var width by remember { mutableStateOf(0.dp) }
         LazyColumn (modifier = Modifier,
             state = listState) {
             item {
                 ExpandedTopBar(title)
             }
             item {
-                LazyRow(modifier = Modifier
-                    .padding(horizontal = normalPadding)
-                    .padding(top = normalPadding).fillMaxWidth(), ) {
-                    items(2){
-                        AppChip(selected= selected){
-                            selected = !selected
-                        }
-                    }
-                }
+                val density = LocalDensity.current
+
                 var prevIndex by rememberSaveable  { mutableStateOf(-1) }
                 when(val uiState = routineDetailUi.userExercises){
                     is UiState.Success ->{
+
+                        val completedPair by remember { derivedStateOf { uiState.data.map { Pair(it.completed, !it.completed) } } }
+                        Row(modifier = Modifier
+                            .padding(horizontal = largePadding)
+                            .padding(top = largePadding)
+                            .fillMaxWidth().onGloballyPositioned {
+                                width = density.run { (it.size.width/2.2f).toDp() }
+                            }.height(50.dp), horizontalArrangement = Arrangement.spacedBy(largePadding)) {
+                            Card(modifier = Modifier.wrapContentWidth(), colors = CardDefaults
+                                .cardColors(containerColor =Color.Transparent),
+                                border = BorderStroke(width = thinThickness, color = Color.Gray.copy(alpha = .5f))
+                            ) {
+                                Row(modifier = Modifier.padding(normalPadding), horizontalArrangement = Arrangement.spacedBy(
+                                    smallPadding), verticalAlignment = Alignment.CenterVertically) {
+                                    Text("${completedPair.filter { it.first }.size}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                                    Text("Completed", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                }
+                            }
+
+                            // uncompleted
+                            Card(modifier = Modifier.wrapContentWidth(), colors = CardDefaults
+                                .cardColors(containerColor =Color.Transparent),
+                                border = BorderStroke(width = thinThickness, color = Color.Gray.copy(alpha = .5f))
+                            ) {
+                                Row(modifier = Modifier.padding(normalPadding), horizontalArrangement = Arrangement.spacedBy(
+                                    smallPadding), verticalAlignment = Alignment.CenterVertically) {
+                                    Text("${completedPair.filter { it.second }.size}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                                    Text("In Progress", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                }
+                            }
+                        }
+
+
                         isLoading = false
                        Column(modifier = Modifier.padding(normalPadding)) {
                            uiState.data.mapIndexed {i, it ->
@@ -157,24 +251,31 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
 
 @Composable
 fun RoutineDetailItem(userExercise: UserExercise, onClickExercise: (UserExercise) -> Unit){
-    Card(modifier = Modifier.fillMaxWidth().height(120.dp).padding(normalPadding)
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .height(120.dp)
+        .padding(normalPadding)
         .clickable {
             onClickExercise(userExercise)
-    }, shape = RoundedCornerShape(normalRadius),
+        }, shape = RoundedCornerShape(normalRadius),
         elevation = CardDefaults.cardElevation(3.dp)) {
         ConstraintLayout(modifier = Modifier
-            .padding(normalPadding).fillMaxWidth().height(120.dp)) {
+            .padding(normalPadding)
+            .fillMaxWidth()
+            .height(120.dp)) {
             val (title, time, completed, statusIc) = createRefs()
             Image(painter = painterResource(R.drawable.routine_clipart),
                 contentDescription = null,
-                modifier = Modifier.constrainAs(statusIc){
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
+                modifier = Modifier
+                    .constrainAs(statusIc) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    }
                     .clip(RoundedCornerShape(normalRadius))
                     .background(Color(0xffFFFDE7))
-                    .width(100.dp).height(100.dp))
+                    .width(100.dp)
+                    .height(100.dp))
             Text(userExercise.exercise.name,
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.constrainAs(title){
@@ -208,7 +309,9 @@ private fun ExpandedTopBar(title: String) {
         contentAlignment = Alignment.BottomStart
     ) {
         Image(
-            modifier = Modifier.fillMaxWidth().height(250.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
             painter = painterResource(R.drawable.routine_ic),
             contentDescription = null,
             contentScale = ContentScale.Fit,
@@ -228,7 +331,9 @@ private fun ExpandedTopBar(title: String) {
 fun AppChip(modifier: Modifier =Modifier, title: String="New chip",selected: Boolean, enabled: Boolean = true, onSelect: (Boolean) -> Unit) {
 
     FilterChip(
-        modifier = modifier.height(40.dp).padding(horizontal = normalPadding),
+        modifier = modifier
+            .height(40.dp)
+            .padding(horizontal = normalPadding),
         selected = selected,
         onClick = { onSelect(selected)},
         enabled = enabled,
@@ -241,6 +346,8 @@ fun AppChip(modifier: Modifier =Modifier, title: String="New chip",selected: Boo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
+                       isLoading: Boolean,
+                       onMarkComplete: (String) -> Unit,
                        content: String, duration: String,
                        onDismissRequest: (Boolean) -> Unit) {
     val sheetState = rememberModalBottomSheetState(
@@ -255,7 +362,8 @@ fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
             onDismissRequest = { onDismissRequest(false) }
         ) {
             ConstraintLayout(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = largePadding)
                     .padding(bottom = largePadding)
                     .scrollable(scrollState, orientation = Orientation.Vertical)
@@ -263,12 +371,16 @@ fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
                     .fillMaxHeight(),
             ) {
 
-                val (button, text, closeBtn) = createRefs()
+                val (button, text, closeBtn, loading) = createRefs()
 
-                IconButton(modifier = Modifier.constrainAs(closeBtn){
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                }.clip(CircleShape).padding(smallPadding).wrapContentSize(),
+                IconButton(modifier = Modifier
+                    .constrainAs(closeBtn) {
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                    }
+                    .clip(CircleShape)
+                    .padding(smallPadding)
+                    .wrapContentSize(),
                     colors = IconButtonDefaults
                         .iconButtonColors(containerColor = MaterialTheme
                             .colorScheme.primary.copy(alpha = .4f),
@@ -279,17 +391,22 @@ fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
                     Icon(Icons.Default.Clear, contentDescription = "close routine details")
                 }
 
-                Column(modifier = Modifier.constrainAs(text){
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }.wrapContentHeight().fillMaxWidth()) {
+                Column(modifier = Modifier
+                    .constrainAs(text) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .wrapContentHeight()
+                    .fillMaxWidth()) {
                     Text(
                         title,
                         style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.padding(bottom = smallPadding)
                     )
-                    Row(modifier = Modifier.wrapContentWidth().padding(bottom = normalPadding)) {
+                    Row(modifier = Modifier
+                        .wrapContentWidth()
+                        .padding(bottom = normalPadding)) {
                         Icon(painter = painterResource(R.drawable.baseline_timer_24),
                             contentDescription = "Exercise duration")
                         Text(
@@ -308,13 +425,25 @@ fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
                     )
                 }
 
-                EndureButton("Mark as Complete",
-                    modifier = Modifier.fillMaxWidth().constrainAs(button){
-                        //top.linkTo(text.bottom, margin = xXLargePadding)
+                FitnessLoadingIndicator(modifier = Modifier.constrainAs(loading) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }, show = isLoading)
+                androidx.compose.animation.AnimatedVisibility(visible = !isLoading, Modifier
+                    .fillMaxWidth()
+                    .constrainAs(button) {
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                    }) { }
+                    }) {
+                    EndureButton("Mark as Complete",
+                        modifier = Modifier
+                            .fillMaxWidth()) {
+                        onMarkComplete(title)
+                    }
+                }
+
             }
 
 

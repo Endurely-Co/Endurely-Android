@@ -3,6 +3,7 @@ package dev.gbenga.endurely
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -10,6 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -70,7 +72,10 @@ class MainActivity : ComponentActivity() {
 
                     composable<SignUp> { SigUpScreen(navHost) }
 
-                    composable<Dashboard> { DashboardScreen(navHost, isDarkMode) }
+                    composable<Dashboard> {
+
+                        DashboardScreen(nav = navHost, isDarkTheme = isDarkMode)
+                    }
 
                     composable<AddNewRoutine>(){
                         AddNewRoutineScreen(navHost, isDarkMode)
@@ -78,6 +83,7 @@ class MainActivity : ComponentActivity() {
 
                     composable<RoutineDetail>() {
                         val args = it.toRoute<RoutineDetail>()
+
                         RoutineDetailScreen(navHost, routineId = args.routineId,
                             title = args.pageTitle) }
                 }

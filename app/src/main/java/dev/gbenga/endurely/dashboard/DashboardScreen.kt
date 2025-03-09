@@ -63,10 +63,14 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun DashboardScreen(nav: EndureNavigation, isDarkTheme: Boolean, viewModel: DashboardViewModel = koinViewModel()) {
+fun DashboardScreen(nav: EndureNavigation,
+                    shouldRefreshRoutine: Boolean = false,
+                    isDarkTheme: Boolean, viewModel: DashboardViewModel = koinViewModel()) {
     val dashboardUi by viewModel.dashboardUi.collectAsStateWithLifecycle()
     val signOut by viewModel.signOut.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+
     LaunchedEffect(signOut) {
         when(signOut){
             is UiState.Success ->{
@@ -89,7 +93,7 @@ fun DashboardScreen(nav: EndureNavigation, isDarkTheme: Boolean, viewModel: Dash
     }, isDarkTheme = isDarkTheme, addRoutineRequest = {
         // add routine
         nav.gotoAddNewRoutine()
-    }){
+    }, shouldRefreshRoutine = shouldRefreshRoutine){
         nav.gotoWelcome()
     }
 }
@@ -99,6 +103,7 @@ fun DashboardScreen(nav: EndureNavigation, isDarkTheme: Boolean, viewModel: Dash
 @Composable
 fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                            isDarkTheme: Boolean,
+                           shouldRefreshRoutine: Boolean,
                            signOutRequest: () -> Unit,
                            onPageChanged: (Int) -> Unit,
                            onItemClick: (String, String) -> Unit,
@@ -108,6 +113,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
     val pagerState = rememberPagerState(pageCount = {3})
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
 
     LaunchedEffect(pagerState.currentPage) {
         onPageChanged(pagerState.currentPage)
@@ -177,11 +183,13 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
        val viewModel: SettingsViewModel = koinViewModel()
 
        HorizontalPager(pagerState, modifier = Modifier.padding(it),
-           userScrollEnabled = false) { page ->
+           userScrollEnabled = false, beyondViewportPageCount= 3) { page ->
            when(page){
                DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUiState, onInValidUser)
                DashboardPages.GYM_ROUTINE -> {
-                   RoutinesScreen(onItemClick = onItemClick){
+                   RoutinesScreen(
+                       shouldRefresh = shouldRefreshRoutine,
+                       onItemClick = onItemClick){
                        coroutineScope.launch {
                            snackbarHostState.showSnackbar(it)
                        }

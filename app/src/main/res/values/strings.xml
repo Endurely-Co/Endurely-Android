@@ -22,4 +22,5 @@
     <string name="routine_time">Time</string>
     <string name="lb_hours">Hours</string>
     <string name="lb_minutes">Minutes</string>
+    <string name="btn_delete">Delete</string>
 </resources>

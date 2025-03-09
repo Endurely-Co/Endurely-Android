@@ -4,5 +4,6 @@ import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.routines.data.UserExercise
 
 data class RoutineDetailUiState(
-    val userExercises: UiState<List<UserExercise>> = UiState.Idle()
+    val userExercises: UiState<List<UserExercise>> = UiState.Idle(),
+    val deleteRoutine: UiState<String> = UiState.Idle()
 )

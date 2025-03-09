@@ -27,16 +27,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
 import dev.gbenga.endurely.ui.theme.largePadding
+import dev.gbenga.endurely.ui.theme.xXLargePadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RoutinesScreen(
+    shouldRefresh: Boolean,
     viewModel: RoutinesViewModel = koinViewModel(),
     onItemClick: (String, String) -> Unit,
     showMessage: (String) -> Unit,) {
 
     val routineUi by viewModel.routinesUi.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.getRoutinesByUserId()
+    }
 
     RoutinesContent(showMessage = showMessage, onRefresh ={
         viewModel.getRoutinesByUserId()
@@ -120,7 +126,7 @@ fun RoutinesContent(routineUi: RoutineUiState,
                         Text("No available routine",
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier.constrainAs(noRoutineBlock){
-                                top.linkTo(days.bottom)
+                                top.linkTo(days.bottom,)
                                 bottom.linkTo(parent.bottom)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
@@ -129,7 +135,7 @@ fun RoutinesContent(routineUi: RoutineUiState,
                         LazyColumn(
 
                             modifier = Modifier.constrainAs(routineBlock){
-                            top.linkTo(days.bottom)
+                            top.linkTo(days.bottom, xXLargePadding)
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
