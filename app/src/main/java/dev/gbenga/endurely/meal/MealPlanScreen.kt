@@ -401,6 +401,49 @@ fun MealNutrientContent(mealPlanUi: MealPlanUiState,
     }
 }
 
+//
+//@Composable
+//fun <E> AnimatedDropDown(title: String,
+//                         expand: Boolean,
+//                         onClick: (Boolean) -> Unit,
+//                         items: List<E>,
+//                         subContent: @Composable (E) -> Unit){
+//
+//    Card(modifier = Modifier.clickable { onClick(!expand) }.padding(bottom = normalPadding)) {
+//        Column(modifier = Modifier.padding(normalPadding)) {
+//            ConstraintLayout(modifier = Modifier.fillMaxWidth()){
+//                val (text, ic) = createRefs()
+//                Text(title,
+//                    style = MaterialTheme.typography.titleMedium,
+//                    modifier = Modifier.constrainAs(text){
+//                        start.linkTo(parent.start)
+//                        top.linkTo(parent.top)
+//                        bottom.linkTo(parent.bottom)
+//                    })
+//                Icon(if(expand) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+//                    contentDescription = title, Modifier.size(20.dp).constrainAs(ic){
+//                        end.linkTo(parent.end)
+//                        top.linkTo(parent.top)
+//                        bottom.linkTo(parent.bottom)
+//                    },
+//                    )
+//            }
+//            AnimatedVisibility(expand) {
+//                Column {
+//                    Divider(modifier = Modifier.fillMaxWidth())
+//                    items.mapIndexed { index, item ->
+//                        Column(modifier = Modifier.padding(smallPadding)){
+//                            subContent(item)
+//                        }
+//                        Divider(modifier = Modifier.fillMaxWidth())
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+
+
 
 @Composable
 fun <E> AnimatedDropDown(title: String,
@@ -409,15 +452,24 @@ fun <E> AnimatedDropDown(title: String,
                          items: List<E>,
                          subContent: @Composable (E) -> Unit){
 
-    Card(modifier = Modifier.clickable { onClick(!expand) }
-        .fillMaxWidth().padding(bottom = normalPadding)) {
+    Card(modifier = Modifier.clickable { onClick(!expand) }.padding(bottom = normalPadding)) {
         Column(modifier = Modifier.padding(normalPadding)) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+            ConstraintLayout(modifier = Modifier.fillMaxWidth()){
+                val (text, ic) = createRefs()
                 Text(title,
                     style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier)
+                    modifier = Modifier.constrainAs(text){
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    })
                 Icon(if(expand) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = title, Modifier.size(50.dp))
+                    contentDescription = title, Modifier.size(20.dp).constrainAs(ic){
+                        end.linkTo(parent.end)
+                        top.linkTo(parent.top)
+                        bottom.linkTo(parent.bottom)
+                    },
+                )
             }
             AnimatedVisibility(expand) {
                 Column {
@@ -433,7 +485,6 @@ fun <E> AnimatedDropDown(title: String,
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

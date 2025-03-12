@@ -71,6 +71,10 @@ fun MealPlanDetailsContent(mealDetailPlanUi: MealPlanDetailsState,
     var microNutrientState by remember { mutableStateOf(false) }
     var vitaminsState by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        mineralState = true
+    }
+
     LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
         item {
             val isLoading = mealDetailPlanUi.details.effect(onError = {

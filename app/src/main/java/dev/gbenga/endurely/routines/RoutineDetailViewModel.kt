@@ -26,7 +26,9 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
 
     fun showDetails(userExercise: UserExercise){
         _exerciseDetailsUi.update { it.copy(title =userExercise.exercise.name,
-            description=userExercise.exercise.description, duration = userExercise.duration, show = true) }
+            description=userExercise.exercise.description,
+            duration = userExercise.duration, show = true,
+            isNotComplete = !userExercise.completed) }
     }
 
     private fun updateStatusCount(complete: Int, inProgress: Int){
@@ -56,7 +58,7 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
                                }
                                updateStatusCount(completedCount, inProgressCount)
                                _exerciseDetailsUi.update { it.copy(
-                                   markComplete = UiState.Success("Exercise was completed"),) }
+                                   markComplete = UiState.Success("Exercise was completed"), isNotComplete = false) }
 
                                _routineDetail.update { it.copy(userExercises
                                = UiState.Success(exercises)) }

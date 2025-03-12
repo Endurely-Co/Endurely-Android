@@ -7,4 +7,5 @@ data class ExerciseDetailsState(val title: String="",
                                 val description: String="",
                                 val duration: String="",
                            val show: Boolean = false,
+                                val isNotComplete: Boolean = true,
     val markComplete: UiState<String> = UiState.Idle())

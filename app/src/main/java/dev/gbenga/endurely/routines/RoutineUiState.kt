@@ -6,7 +6,7 @@ import dev.gbenga.endurely.routines.data.RoutineResponse
 
 data class RoutineUiState(val routines: UiState<List<RoutineData>> = UiState.Idle(),
                           val isDarkMode: Boolean? = null,
-    val days: List<DayOfWeek> = emptyList()
+    val days: List<DayOfWeek> = emptyList(),
 )
 
 data class DayOfWeek(val name: String, val selected: Boolean=false,

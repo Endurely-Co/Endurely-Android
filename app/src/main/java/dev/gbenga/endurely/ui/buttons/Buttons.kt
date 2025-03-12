@@ -52,10 +52,12 @@ contentColor = Color.White
 fun EndureButton(text: String, textColor: Color = MaterialTheme.typography.bodyLarge.color,
                  bgColor: Color? =  null,
                  modifier: Modifier = Modifier,
+                 enabled: Boolean = true,
                  visible: Boolean = true,
                  onClick: () -> Unit){
     AnimatedVisibility(visible, modifier = modifier.height(btnNormal)) {
         Button(onClick = onClick,
+            enabled = enabled,
             colors = if(bgColor == null )  ButtonDefaults.buttonColors() else ButtonDefaults.buttonColors(containerColor = bgColor),
             shape = RoundedCornerShape(
                 normalRadius)){ //Color.White

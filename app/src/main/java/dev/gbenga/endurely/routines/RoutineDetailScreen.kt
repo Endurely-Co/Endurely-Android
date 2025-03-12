@@ -165,6 +165,7 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
             onMarkComplete = {
                 viewModel.markComplete(it)
             },
+            isNotComplete = exerciseDetailsUi.isNotComplete,
             showBottomSheet = exerciseDetailsUi.show,
             isLoading = exerciseDetailsUi.markComplete is UiState.Loading){
             viewModel.hideDetails()
@@ -335,6 +336,7 @@ private fun ExpandedTopBar(title: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
+                       isNotComplete: Boolean,
                        isLoading: Boolean,
                        onMarkComplete: (String) -> Unit,
                        content: String, duration: String,
@@ -426,7 +428,9 @@ fun RoutineBottomSheet(showBottomSheet: Boolean, title: String,
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }) {
-                    EndureButton("Mark as Complete",
+                    EndureButton(
+                        stringResource(R.string.mark_as_complete),
+                        enabled = isNotComplete,
                         modifier = Modifier
                             .fillMaxWidth()) {
                         onMarkComplete(title)
