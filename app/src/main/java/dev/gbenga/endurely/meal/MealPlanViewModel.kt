@@ -25,9 +25,9 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
                         private val savedStateHandle: SavedStateHandle
 ) : EndureNavViewModel() {
 
-    private val _preservedList: ArrayList<Pair<String, GetMealPlan>> = ArrayList()
+    private var _preservedList: List<Pair<String, GetMealPlan>>? = null
     private val _mealPlanUi = MutableStateFlow(MealPlanUiState())
-    private val _dayAndRoutine = MutableStateFlow<List<Pair<String, GetMealPlan>>>(emptyList())
+    //private val _dayAndRoutine = MutableStateFlow<List<Pair<String, GetMealPlan>>>(emptyList())
     private var nutrients: List<NutrientItem>? = null
 
     val mealPlanUi = _mealPlanUi.asStateFlow()
@@ -44,18 +44,7 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
             DayOfWeek(day)
         }, colors = listOf(0xFFE53935,0xff2E7D32,0xFFFFA000, 0xFFE0E0E0)
         ) }
-        runInScope {
-            _dayAndRoutine.collect{ mealPlans ->
 
-                Log.d("mealPlans", "$mealPlans")
-                _mealPlanUi.update {
-                    val mealPlans = ArrayList(mealPlans.map { pair -> pair.second })
-                    it.copy(mealPlan =
-                UiState.Success(mealPlans),)
-                }
-
-            }
-        }
     }
 
     fun selectDay(selectedDay: String=""){
@@ -68,10 +57,18 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
             day.copy(selected = day.name.lowercase() == dayOfWeek,
                 selectedIndex = selectedIndex) }
         )}
-        val cloned = ArrayList<Pair<String, GetMealPlan>>(_preservedList)
-        // Update list
-        _dayAndRoutine.update { cloned.filter {
-            it.first == dayOfWeek.lowercase() } }
+//        val cloned = ArrayList<Pair<String, GetMealPlan>>(_preservedList)
+//        // Update list
+//        _dayAndRoutine.update { cloned.filter {
+//            it.first == dayOfWeek.lowercase() } }
+
+        _preservedList?.let {pL ->
+            _mealPlanUi.update {
+                //val mealPlans = ArrayList(mealPlans.map { pair -> pair.second })
+                it.copy(mealPlan =
+                UiState.Success(pL.map { pair -> pair.second }),)
+            }
+        }
     }
 
     fun planMeal(mealDateMillis: Long){
@@ -100,11 +97,9 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
         runInScope {
             when(val mealPlan = mealPlanRepository.getMealPlanForUser()){
                 is RepoState.Success ->{
-                    _preservedList.clear()
-                    _preservedList.addAll(mealPlan.data.data.map {
-
+                    _preservedList = mealPlan.data.data.map {
                         dayNameUtil.getServerDay(it.mealDateTime).lowercase() to it
-                    })
+                    }
                     val savedWeek = savedStateHandle.get<String>(DAY_OF_WEEK)
                     savedWeek?.let { selectDay(it) } ?: selectDay()
                 }

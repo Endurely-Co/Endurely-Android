@@ -21,8 +21,8 @@ class RoutinesViewModel(private val routineRepository : RoutineRepository,
 
     private val _routinesUi = MutableStateFlow(RoutineUiState())
     val routinesUi = _routinesUi.asStateFlow()
-    private val _preservedList: ArrayList<Pair<String, RoutineData>> = ArrayList()
-    private val _dayAndRoutine = MutableStateFlow<List<Pair<String, RoutineData>>>(emptyList())
+    private var _preservedList: List<Pair<String, RoutineData>>? = null
+   // private val _dayAndRoutine = MutableStateFlow<List<Pair<String, RoutineData>>>(emptyList())
 
     companion object{
 
@@ -38,14 +38,7 @@ class RoutinesViewModel(private val routineRepository : RoutineRepository,
             }
 
         }
-        runInScope {
-            _dayAndRoutine.collect{ routines ->
 
-                _routinesUi.update { it.copy(routines =
-                UiState.Success(routines.map { pair -> pair.second }),) }
-
-            }
-        }
     }
 
     fun selectDay(selectedDay: String=""){
@@ -58,28 +51,35 @@ class RoutinesViewModel(private val routineRepository : RoutineRepository,
             day.copy(selected = day.name.lowercase() == dayOfWeek,
                 selectedIndex = selectedIndex) }
         )}
-        val cloned = ArrayList<Pair<String, RoutineData>>(_preservedList)
+       // val cloned = ArrayList<Pair<String, RoutineData>>(_preservedList)
         // Update list
-        _dayAndRoutine.update { cloned.filter {
-            it.first == dayOfWeek.lowercase() } }
+        _preservedList?.let { pL ->
+            val filtered = pL.filter {
+                it.first == dayOfWeek.lowercase() }.map {
+                    pair -> pair.second }
+            Log.d("_preservedList", "_preservedList: $_preservedList")
+            _routinesUi.update { it.copy(routines =
+            UiState.Success(filtered),) }
+        }
     }
 
 
     private fun getDaysOfWeek(){
-        _routinesUi.update { it.copy(routines = UiState.Loading()) }
+       // _routinesUi.update { it.copy(routines = UiState.Loading()) }
         _routinesUi.update { it.copy(days = Tokens.daysOfWeek.mapIndexed { index, day ->
             DayOfWeek(name = day, index ==-1,)
         }) }
     }
 
     fun getRoutinesByUserId(){
+        _routinesUi.update { it.copy(routines =
+        UiState.Loading(),) }
         runInScope {
             when(val routines =routineRepository.getUserRoutines()){
                 is RepoState.Success ->{
-                    _preservedList.clear()
-                    _preservedList.addAll(routines.data.data.map {
+                    _preservedList = routines.data.data.map {
                         dayNameUtil.getServerDay(it.startDate).lowercase() to it
-                    })
+                    }
                     val savedWeek = savedStateHandle.get<String>(DAY_OF_WEEK)
                     savedWeek?.let { selectDay(it) } ?: selectDay()
                 }
