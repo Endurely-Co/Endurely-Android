@@ -1,28 +1,20 @@
 package dev.gbenga.endurely.routines
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,8 +24,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -42,30 +32,25 @@ import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.core.rememberDateTimeUtils
 import dev.gbenga.endurely.navigation.EndureNavigation
-import dev.gbenga.endurely.routines.data.EditExerciseArg
 import dev.gbenga.endurely.ui.EndurelyDatePicker
-import dev.gbenga.endurely.ui.EndurelyAlertDialog
-import dev.gbenga.endurely.ui.buttons.EndureOutlinedButton
 import dev.gbenga.endurely.ui.buttons.EndurelyTextField
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
-import dev.gbenga.endurely.ui.buttons.GymScaffold
 import dev.gbenga.endurely.ui.buttons.TextFieldButton
-import dev.gbenga.endurely.ui.theme.appColor
 import dev.gbenga.endurely.ui.theme.largePadding
-import dev.gbenga.endurely.ui.theme.smallRadius
 import dev.gbenga.endurely.ui.theme.xLargePadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
-                        addNewRoutineViewModel: AddNewRoutineViewModel = koinViewModel()) {
+fun EditRoutineScreen (
+    navigation: EndureNavigation,
+    isDarkTheme: Boolean,
+    viewModel: EditRoutineViewModel = koinViewModel()){
 
-    val addNewRoutineState by addNewRoutineViewModel.addRoutineUi.collectAsStateWithLifecycle()
+    val editRoutineState by viewModel.editRoutineState.collectAsStateWithLifecycle()
 
-    var routineNameValue by remember { mutableStateOf("")}
+    var routineNameValue by remember { mutableStateOf("") }
     var showDatePicker by remember { mutableStateOf(false) }
     val dateFormater = rememberDateTimeUtils()
     var dateValue by remember { mutableStateOf("Date") }
@@ -76,7 +61,7 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
     var showMessage by remember { mutableStateOf("") }
 
 
-    Log.d("addNewRoutine", "state: ${addNewRoutineState.selectedExercises}")
+    Log.d("addNewRoutine", "state: ${editRoutineState.selectedExercises}")
 
     LaunchedEffect(showMessage) {
         if (showMessage.isNotBlank()){
@@ -92,7 +77,7 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
     }, onSelectDate = {
         dateValue = dateFormater.getDate(it)
         //  dateValue = it.toString()
-        addNewRoutineViewModel.setDate(it)
+        viewModel.setDate(it)
     }, isDarkTheme = isDarkTheme)
 
     var showExerciseDialog by remember { mutableStateOf(false) }
@@ -101,7 +86,7 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
         isDarkTheme = isDarkTheme, onDismissed = {
             showExerciseDialog = false
         }){ name, exercise ->
-        addNewRoutineViewModel.addExercise(name, exercise.duration, exercise.id)
+        viewModel.addExercise(name, exercise.duration, exercise.id)
     }
 
 
@@ -111,17 +96,17 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
             showTimePicker = false
         }) { hour, min ->
         timeValue = dateFormater.getTime(min, hour)
-        addNewRoutineViewModel.setTime(hour, min)
+        viewModel.setTime(hour, min)
     }
 
-    AddNewRoutineContent(addNewRoutineState = addNewRoutineState,
+    AddNewRoutineContent(addNewRoutineState = editRoutineState,
         onSubmitClick = {
-            addNewRoutineViewModel.submitRoutine()
+          //  viewModel.submitRoutine()
         },
         snackbarHostState = snackbarHostState,
         onBackRequest={
             navigation.pop()
-    }) {
+        }) {
 
 
         LazyColumn(
@@ -135,7 +120,7 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
                 EndurelyTextField(
                     value = routineNameValue,
                     onValueChanged = {
-                        addNewRoutineViewModel.setRoutineName(it)
+                        viewModel.setRoutineName(it)
                         routineNameValue = it
                     }, label = R.string.routine_name
                 )
@@ -189,12 +174,12 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
                     }
                 }
             }
-            addNewRoutineState.selectedExercises.map {
+            editRoutineState.selectedExercises.map {
                 item {
 
                     ExerciseSection(it.name,
                         isDarkTheme = isDarkTheme, onRemoveClick ={
-                            addNewRoutineViewModel.removeExercise(it.exercise.id)
+                            viewModel.removeExercise(it.exercise.id)
                         }
                     )
                 }
@@ -204,14 +189,14 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
 
     }
 
-    LaunchedEffect(addNewRoutineState.addedNewRoutine) {
-        if (addNewRoutineState.addedNewRoutine is UiState.Success ){
+    LaunchedEffect(editRoutineState.addedNewRoutine) {
+        if (editRoutineState.addedNewRoutine is UiState.Success ){
             navigation.pop()
-           // navigation.pop()
+            // navigation.pop()
         }
     }
 
-    when(val addedNewRoutineUi = addNewRoutineState.addedNewRoutine){
+    when(val addedNewRoutineUi = editRoutineState.addedNewRoutine){
         is UiState.Failure ->{
             showMessage = addedNewRoutineUi.message
         }
@@ -222,86 +207,5 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
         else ->{
             showMessage =""
         }
-    }
-}
-
-@Composable
-fun <T: RoutineCommonState> AddNewRoutineContent(addNewRoutineState: T,
-                         snackbarHostState: SnackbarHostState,
-                         onSubmitClick: () -> Unit,
-                         onBackRequest: () -> Unit,
-                         content: @Composable () -> Unit,
-){
-
-    GymScaffold(
-        snackbarHostState = snackbarHostState,
-        onBackRequest =onBackRequest,
-        pageTitle = "New Routine",
-        actions = {
-            EndureOutlinedButton("Save",
-                enabled = addNewRoutineState.enableSubmit,
-                onClick = onSubmitClick)
-        }
-
-
-    ) {
-
-
-        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-            val (mainContent) = createRefs()
-
-            Box(modifier = Modifier.constrainAs(mainContent){
-                top.linkTo(parent.top)
-            }) {
-                content()
-            }
-
-        }
-    }
-}
-
-@Composable
-fun  LazyItemScope.ExerciseSection(title: String, isDarkTheme: Boolean, onRemoveClick: () -> Unit){
-    Row(modifier = Modifier
-        .animateItem()
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(smallRadius))
-        .background(appColor(isDarkTheme).defaultCard), horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically) {
-        Text(title, modifier = Modifier
-            .fillMaxWidth(.9f)
-            .padding(largePadding),
-            style = MaterialTheme.typography.titleMedium)
-        IconButton(onClick = onRemoveClick) {
-            Icon(Icons.Default.Clear, contentDescription = "remove", tint = Color.Red)
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RoutineTimePickerDialog(show: Boolean,
-                            isDarkTheme : Boolean, onDismiss: () -> Unit,  onConfirm: (Int, Int) -> Unit){
-    val currentTime = Calendar.getInstance()
-
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime[Calendar.HOUR_OF_DAY],
-        initialMinute = currentTime[Calendar.MINUTE],
-        is24Hour = false,
-    )
-    EndurelyAlertDialog(
-        show =show,
-        isDarkTheme =isDarkTheme,
-        onDismiss = { onDismiss()},
-        onConfirm = {
-            onConfirm(timePickerState.hour, timePickerState.minute)
-            onDismiss()
-        }
-    ) {
-        TimePicker(
-            state = timePickerState,
-
-        )
     }
 }

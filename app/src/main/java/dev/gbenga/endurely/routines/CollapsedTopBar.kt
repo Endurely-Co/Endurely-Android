@@ -16,6 +16,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -65,16 +66,19 @@ fun CollapsedTopBar(
 @Composable
 fun RoutineDetailScaffold(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    onRemoveRequest: () -> Unit, onBackRequest: () -> Unit, content: @Composable () -> Unit) {
+    onRemoveRequest: () -> Unit,
+    onBackRequest: () -> Unit,
+    onEditRequest: () -> Unit,
+    content: @Composable () -> Unit) {
     Scaffold(
         scaffoldState = scaffoldState,
-//        floatingActionButton = {
-//            FloatingActionButton(onClick = {
-//                onRemoveRequest()
-//            }) {
-//                Icon(Icons.Default.Delete, contentDescription = "Remove routine")
-//            }
-//        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                onRemoveRequest()
+            }) {
+                Icon(Icons.Default.Delete, contentDescription = "Remove routine")
+            }
+        },
         backgroundColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(title = {
@@ -83,9 +87,9 @@ fun RoutineDetailScaffold(
                 BackNavigationButton(onBackRequest)
             }, actions = {
                 TextButton(onClick = {
-                    onRemoveRequest()
+                    onEditRequest()
                 }) {
-                    Text(stringResource(R.string.btn_delete), style = MaterialTheme
+                    Text(stringResource(R.string.btn_edit), style = MaterialTheme
                         .typography.bodyLarge.copy(fontWeight = FontWeight.W800))
                 }
             })

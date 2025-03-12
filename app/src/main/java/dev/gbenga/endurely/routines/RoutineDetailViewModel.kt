@@ -35,7 +35,11 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
         _routineDetail.update { it.copy(statusCount = Pair(complete, inProgress)) }
     }
 
-    fun markComplete(name: String){
+    fun editRoutine(){
+
+    }
+
+    fun markComplete(name: String){~
         _exerciseDetailsUi.update { it.copy(
             markComplete = UiState.Loading()) }
        runInScope {

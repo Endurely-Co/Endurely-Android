@@ -57,16 +57,14 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
             day.copy(selected = day.name.lowercase() == dayOfWeek,
                 selectedIndex = selectedIndex) }
         )}
-//        val cloned = ArrayList<Pair<String, GetMealPlan>>(_preservedList)
-//        // Update list
-//        _dayAndRoutine.update { cloned.filter {
-//            it.first == dayOfWeek.lowercase() } }
 
         _preservedList?.let {pL ->
+            val filtered = pL.filter {
+                it.first == dayOfWeek.lowercase() }.map {
+                    pair -> pair.second }
             _mealPlanUi.update {
-                //val mealPlans = ArrayList(mealPlans.map { pair -> pair.second })
                 it.copy(mealPlan =
-                UiState.Success(pL.map { pair -> pair.second }),)
+                UiState.Success(filtered),)
             }
         }
     }

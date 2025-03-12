@@ -36,6 +36,7 @@ import dev.gbenga.endurely.onboard.signup.SigUpScreen
 import dev.gbenga.endurely.onboard.welcome.WelcomeScreen
 import dev.gbenga.endurely.routines.AddNewRoutineScreen
 import dev.gbenga.endurely.routines.RoutineDetailScreen
+import dev.gbenga.endurely.routines.data.EditExerciseArg
 import dev.gbenga.endurely.ui.theme.EndurelyTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -82,6 +83,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable<AddNewRoutine>(){
+                        val editExerciseArg = it.toRoute<EditExerciseArg>()
                         AddNewRoutineScreen(navHost, isDarkMode)
                     }
 

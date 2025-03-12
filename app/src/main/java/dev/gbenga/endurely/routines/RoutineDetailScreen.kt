@@ -129,7 +129,8 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
         scaffoldState = scaffoldState,
         onBackRequest = {
         navigation.pop()
-    }, onRemoveRequest = {
+    },
+        onRemoveRequest = {
             coroutineScope.launch {
                 val snackbarState = scaffoldState.snackbarHostState.showSnackbar(
                     "Confirm you want to delete routine",
@@ -138,7 +139,10 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
                     viewModel.removeRoutine(routineId)
                 }
             }
-    }){
+    },
+        onEditRequest = {
+
+        }){
 
 
         LaunchedEffect(exerciseDetailsUi.markComplete) {
@@ -180,7 +184,7 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
             item {
                 val density = LocalDensity.current
 
-                var prevIndex by rememberSaveable  { mutableStateOf(-1) }
+                var prevIndex by rememberSaveable  { mutableIntStateOf(-1) }
                 when(val uiState = routineDetailUi.userExercises){
                     is UiState.Success ->{
 
