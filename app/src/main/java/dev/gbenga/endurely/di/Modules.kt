@@ -8,6 +8,10 @@ import dev.gbenga.endurely.dashboard.Greeting
 import dev.gbenga.endurely.dashboard.SettingsRepository
 import dev.gbenga.endurely.dashboard.SettingsViewModel
 import dev.gbenga.endurely.main.EndurelyBottomBarViewModel
+import dev.gbenga.endurely.meal.MealPlanDetailsViewModel
+import dev.gbenga.endurely.meal.MealPlanRepository
+import dev.gbenga.endurely.meal.MealPlanViewModel
+import dev.gbenga.endurely.meal.MealService
 import dev.gbenga.endurely.onboard.OnboardRepository
 import dev.gbenga.endurely.onboard.data.OnboardService
 import dev.gbenga.endurely.onboard.login.LoginViewModel
@@ -28,13 +32,16 @@ import kotlin.coroutines.CoroutineContext
 val onboardModule = module {
     single { get<Retrofit>().create(OnboardService::class.java) }
     single { get<Retrofit>().create(RoutinesService::class.java) }
+    single<MealService> { get<Retrofit>().create(MealService::class.java)  }
     single { Greeting() }
 
     single { SettingsDatastore(get()) }
     single<CoroutineContext> { Dispatchers.IO }
+    single { MealPlanRepository(get(), get()) }
     single { OnboardRepository(get(), get(), get()) }
     single { DashboardRepository(get(), get()) }
     single { SettingsRepository(get(), get(), get()) }
+    single { MealPlanRepository(get(), get()) }
     viewModel { (handle: SavedStateHandle) -> WelcomeViewModel(handle, get()) }
     viewModel { (savedState: SavedStateHandle) -> LoginViewModel(savedState, get()) }
     viewModel { SignUpViewModel(get()) }
@@ -46,4 +53,6 @@ val onboardModule = module {
     viewModel { RoutineDetailViewModel(get()) }
     viewModel{ AddNewRoutineViewModel(get(), get(), get()) }
     viewModel { ExerciseSuggestionsViewModel(get()) }
+    viewModel { (handle: SavedStateHandle) -> MealPlanViewModel(get(), get(), get(), handle) }
+    viewModel { MealPlanDetailsViewModel(get()) }
 }

@@ -15,9 +15,14 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
     private val timeFormat: DateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()),
     private val calendar : Calendar= Calendar.getInstance()) {
 
+    private var dateInMillis: Long= 0L
+
     fun getDate(dateInMillis: Long): String {
+        this.dateInMillis = dateInMillis
         return dateFormat.format(Date(dateInMillis)) ?: ""
     }
+
+    fun getDateMillis(): Long = dateInMillis
 
     fun parseDateTime(hour: Int,minute: Int, date: Long) = calendar.apply {
         timeInMillis = date
@@ -27,6 +32,10 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
 
     fun getServerTime(hour: Int,minute: Int, date: Long): String{
         return serverDateFormat.format(Date(parseDateTime(hour, minute, date)))
+    }
+
+    fun getServerDate(dateInMillis: Long): String{
+        return serverDateFormat.format(dateInMillis)
     }
 
     fun getTime(timeInMillis: Long): String {

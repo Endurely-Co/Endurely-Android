@@ -29,6 +29,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.Tokens
 import dev.gbenga.endurely.core.UiState
+import dev.gbenga.endurely.navigation.EndureNavigation
 import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.menuCardHeight
 import dev.gbenga.endurely.ui.theme.normalRadius
@@ -36,7 +37,9 @@ import dev.gbenga.endurely.ui.theme.xLargePadding
 
 
 @Composable
-fun DashboardScreenList(dashboardUiState: DashboardUiState, onInValidUser: () -> Unit){
+fun DashboardScreenList(dashboardUiState: DashboardUiState,
+                        openMealScreen: (Int) -> Unit,
+                        onInValidUser: () -> Unit){
 
     val scrollState = rememberLazyListState()
 
@@ -66,7 +69,7 @@ fun DashboardScreenList(dashboardUiState: DashboardUiState, onInValidUser: () ->
                     .fillMaxWidth()
                     .height(menuCardHeight)
                     .clickable {
-
+                        openMealScreen(index)
                     }) {
                     val (title, clipArt) = createRefs()
                     Text(menus[index].title, style = MaterialTheme.typography
@@ -134,5 +137,6 @@ fun PreviewDashboardScreenContent(){
             bgColor = 0xFFE3C1A5.toInt(),
             clipArt = R.drawable.calorie_tracker_ic)
     )), signOutRequest = {}, onItemClick = {a, b ->}, addRoutineRequest = {}, onPageChanged = {},
-        isDarkTheme = false, shouldRefreshRoutine = false){}
+        isDarkTheme = false,
+        openMealScreen = {}){}
 }

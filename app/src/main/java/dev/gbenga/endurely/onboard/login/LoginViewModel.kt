@@ -24,7 +24,7 @@ class LoginViewModel(savedStateHandle: SavedStateHandle,
         if(username.hasNChars(3) && password.hasNChars(6)){
             _loginUiState.update { it.copy(loginUi = UiState.Loading()) }
             runInScope {
-                when(val result = onboardRepository.logIn(username, password)){
+                when(val result = onboardRepository.logIn(username.trim(), password.trim())){
                     is RepoState.Success ->{
                         _loginUiState.update { it.copy(loginUi = UiState.Success(result.data)) }
                     }

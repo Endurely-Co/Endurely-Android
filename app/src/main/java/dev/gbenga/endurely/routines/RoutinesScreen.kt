@@ -24,7 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.gbenga.endurely.core.SevenDaysChips
 import dev.gbenga.endurely.core.UiState
+import dev.gbenga.endurely.navigation.EndureNavigation
+import dev.gbenga.endurely.ui.buttons.AppChip
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
 import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.xXLargePadding
@@ -33,7 +36,6 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RoutinesScreen(
-    shouldRefresh: Boolean,
     viewModel: RoutinesViewModel = koinViewModel(),
     onItemClick: (String, String) -> Unit,
     showMessage: (String) -> Unit,) {
@@ -49,7 +51,7 @@ fun RoutinesScreen(
     }, routineUi = routineUi, onSelectDay = {
         viewModel.selectDay(it)
     }, onItemClick =onItemClick){
-        viewModel.clearState()
+
     }
 
 }
@@ -77,47 +79,16 @@ fun RoutinesContent(routineUi: RoutineUiState,
         val (routineBlock, noRoutineBlock, loadingBlock, days) = createRefs()
         val coroutineScope = rememberCoroutineScope()
         val daysState = rememberLazyListState()
-        var selectedIndex by remember { mutableStateOf(-1) }
 
-        LaunchedEffect(selectedIndex) {
-            if (selectedIndex < 0)return@LaunchedEffect
-            Log.d("selectedIndex", "in: $selectedIndex")
-            coroutineScope.launch {
-                val itemInfo = daysState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == selectedIndex }
-                if (itemInfo != null) {
-                    val center = daysState.layoutInfo.viewportEndOffset / 2
-                    val childCenter = itemInfo.offset + itemInfo.size / 2
-                    daysState.animateScrollBy((childCenter - center).toFloat())
-                } else {
-                    daysState.animateScrollToItem(selectedIndex)
-                }
-            }
 
-        }
 
-        LazyRow(state = daysState, modifier = Modifier.constrainAs(days){
+        SevenDaysChips(modifier =Modifier.constrainAs(days){
             top.linkTo(parent.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
-        }.padding(largePadding)) {
+        }, lazyList = daysState, days= routineUi.days,
+            onSelectDay=onSelectDay)
 
-            routineUi.days.mapIndexed { index, day ->
-                item {
-                    if (selectedIndex != day.selectedIndex){
-                        selectedIndex = day.selectedIndex
-                    }
-                    AppChip(
-                        modifier = Modifier.animateItem(),
-                        selected = day.selected,
-                        enabled = day.enabled,
-                        title = day.name
-                    ) {
-                        onSelectDay(day.name)
-
-                    }
-                }
-            }
-        }
 
         when(val routineState = routineUi.routines){
             is UiState.Success ->{
@@ -146,7 +117,9 @@ fun RoutinesContent(routineUi: RoutineUiState,
                                 RoutineUiItem(modifier = Modifier.animateItem(), routines[index], index,
                                     routineUi.isDarkMode ?: isSystemInDarkTheme(),
                                     onItemClick = {
-                                        onItemClick(routines[index].routineId, routines[index].routineName)
+
+                                        onItemClick(routines[index].routineId,
+                                            routines[index].routineName)
                                     })
 
                             }

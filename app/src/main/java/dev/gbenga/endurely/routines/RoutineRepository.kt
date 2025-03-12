@@ -18,8 +18,6 @@ class RoutineRepository(private val routinesService: RoutinesService,
 
     private suspend fun getUser() = userDataStore.login.first ().data
 
-    private suspend fun getUserId() = getUser().userId
-
     suspend fun getUserRoutines() = repoContext(){
         routinesService.getRoutinesByUserId(getUser().userId)
     }

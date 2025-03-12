@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,7 @@ import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.normalThickness
 import dev.gbenga.endurely.ui.theme.textFieldNormal
+import kotlinx.coroutines.launch
 
 /*
 contentColor = Color.White
@@ -103,21 +105,27 @@ fun TextFieldButton(title: String,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EndurelyBottomSheet(showDialog: Boolean, sheetState: SheetState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun EndurelyBottomSheet(
+    showDialog: Boolean,
+    modifier: Modifier = Modifier.fillMaxHeight(),
+    sheetState: SheetState,
+                         onDismissRequest:  () -> Unit,
+                        content: @Composable () -> Unit) {
 
     if (showDialog){
         ModalBottomSheet(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = modifier,
             sheetState = sheetState,
-            onDismissRequest = { showBottomSheet = false }
+            onDismissRequest = {
+                onDismissRequest()
+            }
         ) {
-            Text(
-                "Swipe up to open sheet. Swipe down to dismiss.",
-                modifier = Modifier.padding(16.dp)
-            )
+            Column(modifier = Modifier.padding(largePadding)) {
+                content()
+            }
         }
     }
+
 
 }
 

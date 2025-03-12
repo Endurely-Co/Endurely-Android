@@ -26,6 +26,12 @@ class EndureNavigation(val navHostController:  NavHostController) {
         }
     }
 
+    fun gotoMealPlanDetails(planId: String) = navHostController.navigate(MealPlanDetails(planId))
+
+    fun gotoMealPlan(){
+        navHostController.navigate(MealPlan)
+    }
+
     private val savedStateHandle: SavedStateHandle? = navHostController
         .previousBackStackEntry
         ?.savedStateHandle

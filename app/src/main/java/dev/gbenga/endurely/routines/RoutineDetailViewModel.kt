@@ -1,6 +1,9 @@
 package dev.gbenga.endurely.routines
 
 import android.util.Log
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import dev.gbenga.endurely.core.EndureNavViewModel
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.onboard.data.RepoState
@@ -26,28 +29,39 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
             description=userExercise.exercise.description, duration = userExercise.duration, show = true) }
     }
 
+    private fun updateStatusCount(complete: Int, inProgress: Int){
+        _routineDetail.update { it.copy(statusCount = Pair(complete, inProgress)) }
+    }
+
     fun markComplete(name: String){
         _exerciseDetailsUi.update { it.copy(
             markComplete = UiState.Loading()) }
        runInScope {
            routine?.let { routine->
-               val exercises = (_routineDetail.value.userExercises as UiState.Success).data.map { ue ->
-                   if (ue.exercise.name == name) {
-                       ue.copy(completed = true)
-                   } else ue
+               val exercises = (_routineDetail.value.userExercises as UiState.Success).data.map { userExercise ->
+                   if (userExercise.exercise.name == name) {
+                       userExercise.copy(completed = true)
+                   } else userExercise
                }
                routineRepository.editRoutine(routine.data.first()
                    .toRequest(exercises)).also { result ->
                        when(result){
                            is RepoState.Success ->{
+                               var completedCount = 0
+                               var inProgressCount = 0
+                               exercises.forEach {
+                                   if (it.completed){
+                                       completedCount += 1
+                                   }else inProgressCount += 1
+                               }
+                               updateStatusCount(completedCount, inProgressCount)
                                _exerciseDetailsUi.update { it.copy(
-                                   markComplete = UiState.Success("Exercise was completed")) }
+                                   markComplete = UiState.Success("Exercise was completed"),) }
 
                                _routineDetail.update { it.copy(userExercises
                                = UiState.Success(exercises)) }
                            }
                            is RepoState.Error ->{
-                               Log.d("RepoState", "noew: ${result.errorMsg}")
                                _exerciseDetailsUi.update { it.copy(markComplete = UiState.Failure(result.errorMsg)) }
                            }
                        }
@@ -84,9 +98,22 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
             _routineDetail.update { it.copy(userExercises = UiState.Loading()) }
             when(val routine = routineRepository.getUserRoutineById(routineId)){
                 is RepoState.Success ->{
+
+                    var completedCount = 0
+                    var inProgressCount = 0
+
+                    routine.data.data.first().exercises.forEach {
+                        if (it.completed){
+                            completedCount += 1
+                        }else{
+                            inProgressCount += 1
+                        }
+                    }
+
                     this.routine = routine.data
                     _routineDetail.update { it.copy(userExercises
-                    = UiState.Success(routine.data.data.first().exercises)) }
+                    = UiState.Success(routine.data.data.first().exercises),
+                        statusCount = Pair(completedCount, inProgressCount)) }
                 }
                 is RepoState.Error ->{
                     _routineDetail.update { it.copy(userExercises = UiState.Failure(routine.errorMsg)) }

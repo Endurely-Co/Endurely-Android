@@ -23,4 +23,11 @@
     <string name="lb_hours">Hours</string>
     <string name="lb_minutes">Minutes</string>
     <string name="btn_delete">Delete</string>
+    <string name="completed">Completed</string>
+    <string name="in_progress">In Progress</string>
+    <string name="no_meal_available">No meal plan here at the moment</string>
+    <string name="new_meal_plan">New Meal Plan</string>
+    <string name="lb_meal">Enter food name</string>
+
+    <string name="btn_continue">Continue</string>
 </resources>

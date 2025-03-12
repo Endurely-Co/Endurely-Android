@@ -93,7 +93,11 @@ fun DashboardScreen(nav: EndureNavigation,
     }, isDarkTheme = isDarkTheme, addRoutineRequest = {
         // add routine
         nav.gotoAddNewRoutine()
-    }, shouldRefreshRoutine = shouldRefreshRoutine){
+    }, openMealScreen= {
+        when(it ){
+            2 ->  nav.gotoMealPlan()
+        }
+    }){
         nav.gotoWelcome()
     }
 }
@@ -103,7 +107,7 @@ fun DashboardScreen(nav: EndureNavigation,
 @Composable
 fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                            isDarkTheme: Boolean,
-                           shouldRefreshRoutine: Boolean,
+                           openMealScreen: (Int) -> Unit,
                            signOutRequest: () -> Unit,
                            onPageChanged: (Int) -> Unit,
                            onItemClick: (String, String) -> Unit,
@@ -185,10 +189,10 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
        HorizontalPager(pagerState, modifier = Modifier.padding(it),
            userScrollEnabled = false) { page ->
            when(page){
-               DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUiState, onInValidUser)
+               DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUiState,
+                   openMealScreen=openMealScreen, onInValidUser)
                DashboardPages.GYM_ROUTINE -> {
                    RoutinesScreen(
-                       shouldRefresh = shouldRefreshRoutine,
                        onItemClick = onItemClick){
                        coroutineScope.launch {
                            snackbarHostState.showSnackbar(it)

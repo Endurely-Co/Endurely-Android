@@ -18,11 +18,11 @@ class ApiInterceptor : Interceptor {
         Log.d("body_body", body)
         try {
             val newResponse = gson.fromJson(body, Map::class.java)
+            Log.d("newResponse", "${request.url} \n $newResponse")
 
             newResponse["message"]?.let {
                 if (newResponse["message"] is Map<*, *>){
                     val errors = newResponse["message"] as Map<String, Any>
-                    Log.d("newResponse", "${newResponse["message"] }")
                     return response.newBuilder().message("${errors.values}").build()
 
                 }else{

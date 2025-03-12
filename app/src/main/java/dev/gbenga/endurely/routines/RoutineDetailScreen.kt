@@ -61,6 +61,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -182,21 +183,22 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
                 when(val uiState = routineDetailUi.userExercises){
                     is UiState.Success ->{
 
-                        val completedPair by remember { derivedStateOf { uiState.data.map { Pair(it.completed, !it.completed) } } }
                         Row(modifier = Modifier
                             .padding(horizontal = largePadding)
                             .padding(top = largePadding)
-                            .fillMaxWidth().onGloballyPositioned {
-                                width = density.run { (it.size.width/2.2f).toDp() }
-                            }.height(50.dp), horizontalArrangement = Arrangement.spacedBy(largePadding)) {
+                            .fillMaxWidth()
+                            .onGloballyPositioned {
+                                width = density.run { (it.size.width / 2.2f).toDp() }
+                            }
+                            .height(50.dp), horizontalArrangement = Arrangement.spacedBy(largePadding)) {
                             Card(modifier = Modifier.wrapContentWidth(), colors = CardDefaults
                                 .cardColors(containerColor =Color.Transparent),
                                 border = BorderStroke(width = thinThickness, color = Color.Gray.copy(alpha = .5f))
                             ) {
                                 Row(modifier = Modifier.padding(normalPadding), horizontalArrangement = Arrangement.spacedBy(
                                     smallPadding), verticalAlignment = Alignment.CenterVertically) {
-                                    Text("${completedPair.filter { it.first }.size}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-                                    Text("Completed", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                    Text("${routineDetailUi.statusCount.first}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                                    Text(stringResource(R.string.completed), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                                 }
                             }
 
@@ -207,8 +209,8 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
                             ) {
                                 Row(modifier = Modifier.padding(normalPadding), horizontalArrangement = Arrangement.spacedBy(
                                     smallPadding), verticalAlignment = Alignment.CenterVertically) {
-                                    Text("${completedPair.filter { it.second }.size}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
-                                    Text("In Progress", style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
+                                    Text("${routineDetailUi.statusCount.second}", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+                                    Text(stringResource(R.string.in_progress), style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Bold))
                                 }
                             }
                         }
@@ -327,20 +329,7 @@ private fun ExpandedTopBar(title: String) {
 }
 
 // var selected by remember { mutableStateOf(false) }
-@Composable
-fun AppChip(modifier: Modifier =Modifier, title: String="New chip",selected: Boolean, enabled: Boolean = true, onSelect: (Boolean) -> Unit) {
 
-    FilterChip(
-        modifier = modifier
-            .height(40.dp)
-            .padding(horizontal = normalPadding),
-        selected = selected,
-        onClick = { onSelect(selected)},
-        enabled = enabled,
-        label = { Text(title) },
-        colors = FilterChipDefaults.filterChipColors(selectedLabelColor = MaterialTheme.colorScheme.primary),
-    )
-}
 
 
 @OptIn(ExperimentalMaterial3Api::class)

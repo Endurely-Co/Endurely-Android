@@ -21,7 +21,9 @@ class SignUpViewModel(private val onboardRepo: OnboardRepository) : EndureNavVie
             && lastName.hasNChars(2) && password.hasNChars(6)){
             _signUpState.update { it.copy(signUp = UiState.Loading()) }
             runInScope {
-                when(val repoState = onboardRepo.signUp(SignUpRequest(email, firstName, lastName, password, username))){
+                when(val repoState = onboardRepo.signUp(SignUpRequest(
+                    email.trim(), firstName.trim(),
+                    lastName.trim(), password.trim(), username.trim()))){
                     is RepoState.Success ->{
                         _signUpState.update { it.copy(signUp = UiState.Success("Sign up was successful")) }
                     }

@@ -20,9 +20,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import dev.gbenga.endurely.dashboard.DashboardScreen
+import dev.gbenga.endurely.meal.MealPlanDetailsScreen
+import dev.gbenga.endurely.meal.MealPlanScreen
 import dev.gbenga.endurely.navigation.AddNewRoutine
 import dev.gbenga.endurely.navigation.Dashboard
 import dev.gbenga.endurely.navigation.Login
+import dev.gbenga.endurely.navigation.MealPlan
+import dev.gbenga.endurely.navigation.MealPlanDetails
 import dev.gbenga.endurely.navigation.RoutineDetail
 import dev.gbenga.endurely.navigation.SignUp
 import dev.gbenga.endurely.navigation.Welcome
@@ -79,6 +83,16 @@ class MainActivity : ComponentActivity() {
 
                     composable<AddNewRoutine>(){
                         AddNewRoutineScreen(navHost, isDarkMode)
+                    }
+
+                    composable<MealPlan> {
+                        MealPlanScreen(navHost, isDarkMode=isDarkMode)
+                    }
+
+                    composable<MealPlanDetails> {
+                        val planDetail = it.toRoute<MealPlanDetails>()
+                        MealPlanDetailsScreen(navigation = navHost,
+                            planId=planDetail.planId)
                     }
 
                     composable<RoutineDetail>() {

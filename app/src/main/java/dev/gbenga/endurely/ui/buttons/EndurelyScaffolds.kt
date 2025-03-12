@@ -35,15 +35,18 @@ import dev.gbenga.endurely.ui.theme.appColor
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GymScaffold(
+    modifier: Modifier =Modifier,
     isDarkMode: Boolean = isSystemInDarkTheme(),
     pageTitle: String? = null,
     snackbarHostState: SnackbarHostState = SnackbarHostState(),
     backIcon: ImageVector = Icons.AutoMirrored.Filled.ArrowBack,
     actions: @Composable RowScope.() -> Unit = {},
+    floatingActionButton: @Composable () -> Unit = {},
     onBackRequest: (() -> Unit)? = null, content: @Composable () -> Unit){
 
 
     Scaffold (
+        floatingActionButton = floatingActionButton,
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
                 // custom snackbar with the custom colors
@@ -54,7 +57,7 @@ fun GymScaffold(
                 )
             }
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             pageTitle?.let { TopAppBar(title = {
                 Text(pageTitle)
