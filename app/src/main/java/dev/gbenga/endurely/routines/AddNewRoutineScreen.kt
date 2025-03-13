@@ -42,7 +42,6 @@ import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.core.rememberDateTimeUtils
 import dev.gbenga.endurely.navigation.EndureNavigation
-import dev.gbenga.endurely.routines.data.EditExerciseArg
 import dev.gbenga.endurely.ui.EndurelyDatePicker
 import dev.gbenga.endurely.ui.EndurelyAlertDialog
 import dev.gbenga.endurely.ui.buttons.EndureOutlinedButton
@@ -52,6 +51,7 @@ import dev.gbenga.endurely.ui.buttons.GymScaffold
 import dev.gbenga.endurely.ui.buttons.TextFieldButton
 import dev.gbenga.endurely.ui.theme.appColor
 import dev.gbenga.endurely.ui.theme.largePadding
+import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.smallRadius
 import dev.gbenga.endurely.ui.theme.xLargePadding
 import kotlinx.coroutines.launch
@@ -114,7 +114,7 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
         addNewRoutineViewModel.setTime(hour, min)
     }
 
-    AddNewRoutineContent(addNewRoutineState = addNewRoutineState,
+    AddEditRoutineScaffold(addNewRoutineState = addNewRoutineState,
         onSubmitClick = {
             addNewRoutineViewModel.submitRoutine()
         },
@@ -132,6 +132,8 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
             )
         ) {
             item {
+                Text(stringResource(R.string.what_would_you_like_to_name_your_routine), style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = normalPadding))
                 EndurelyTextField(
                     value = routineNameValue,
                     onValueChanged = {
@@ -145,9 +147,13 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
                 ConstraintLayout(modifier = Modifier.fillMaxWidth(),) {
                     val (routineDate, routineTime, routineDateTimeTile) = createRefs()
 
-                    Text("Routine date", style = MaterialTheme.typography.titleLarge, modifier = Modifier.constrainAs(routineDateTimeTile){
-                        start.linkTo(parent.start)
-                    })
+                    Text(stringResource(R.string.enter_the_date_time_for_your_routine),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .constrainAs(routineDateTimeTile) {
+                                start.linkTo(parent.start)
+                            }
+                            .padding(bottom = normalPadding))
 
                     TextFieldButton(onClick = {
                         showDatePicker = true
@@ -226,11 +232,11 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
 }
 
 @Composable
-fun <T: RoutineCommonState> AddNewRoutineContent(addNewRoutineState: T,
-                         snackbarHostState: SnackbarHostState,
-                         onSubmitClick: () -> Unit,
-                         onBackRequest: () -> Unit,
-                         content: @Composable () -> Unit,
+fun <T: RoutineCommonState> AddEditRoutineScaffold(addNewRoutineState: T,
+                                                   snackbarHostState: SnackbarHostState,
+                                                   onSubmitClick: () -> Unit,
+                                                   onBackRequest: () -> Unit,
+                                                   content: @Composable () -> Unit,
 ){
 
     GymScaffold(
@@ -238,7 +244,7 @@ fun <T: RoutineCommonState> AddNewRoutineContent(addNewRoutineState: T,
         onBackRequest =onBackRequest,
         pageTitle = "New Routine",
         actions = {
-            EndureOutlinedButton("Save",
+            EndureOutlinedButton(addNewRoutineState.actionButton,
                 enabled = addNewRoutineState.enableSubmit,
                 onClick = onSubmitClick)
         }

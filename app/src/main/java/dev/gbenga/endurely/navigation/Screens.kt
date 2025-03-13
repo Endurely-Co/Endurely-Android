@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.navigation
 
+import dev.gbenga.endurely.routines.data.RoutineData
 import kotlinx.serialization.Serializable
 
 interface Screens
@@ -12,4 +13,5 @@ interface Screens
 @Serializable data class RoutineDetail(val routineId: String, val pageTitle: String) : Screens
 @Serializable object AddNewRoutine : Screens
 @Serializable object MealPlan: Screens
+@Serializable data class EditRoutine(val data: String): Screens
 @Serializable data class MealPlanDetails(val planId: String): Screens

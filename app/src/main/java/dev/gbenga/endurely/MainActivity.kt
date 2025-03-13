@@ -24,6 +24,7 @@ import dev.gbenga.endurely.meal.MealPlanDetailsScreen
 import dev.gbenga.endurely.meal.MealPlanScreen
 import dev.gbenga.endurely.navigation.AddNewRoutine
 import dev.gbenga.endurely.navigation.Dashboard
+import dev.gbenga.endurely.navigation.EditRoutine
 import dev.gbenga.endurely.navigation.Login
 import dev.gbenga.endurely.navigation.MealPlan
 import dev.gbenga.endurely.navigation.MealPlanDetails
@@ -31,10 +32,12 @@ import dev.gbenga.endurely.navigation.RoutineDetail
 import dev.gbenga.endurely.navigation.SignUp
 import dev.gbenga.endurely.navigation.Welcome
 import dev.gbenga.endurely.navigation.rememberEndureNavigation
+import dev.gbenga.endurely.navigation.toType
 import dev.gbenga.endurely.onboard.login.LoginScreen
 import dev.gbenga.endurely.onboard.signup.SigUpScreen
 import dev.gbenga.endurely.onboard.welcome.WelcomeScreen
 import dev.gbenga.endurely.routines.AddNewRoutineScreen
+import dev.gbenga.endurely.routines.EditRoutineScreen
 import dev.gbenga.endurely.routines.RoutineDetailScreen
 import dev.gbenga.endurely.routines.data.EditExerciseArg
 import dev.gbenga.endurely.ui.theme.EndurelyTheme
@@ -83,8 +86,12 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable<AddNewRoutine>(){
-                        val editExerciseArg = it.toRoute<EditExerciseArg>()
                         AddNewRoutineScreen(navHost, isDarkMode)
+                    }
+
+                    composable<EditRoutine> {
+                        val editRoutine = it.toRoute<EditRoutine>()
+                        EditRoutineScreen(navHost, isDarkMode,  editRoutine.data.toType())
                     }
 
                     composable<MealPlan> {

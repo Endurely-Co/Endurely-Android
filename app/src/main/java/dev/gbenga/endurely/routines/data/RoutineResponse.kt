@@ -1,6 +1,7 @@
 package dev.gbenga.endurely.routines.data
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 data class TimeVal(val hrs: Int, val mins: Int, val secs: Int, ){
 
@@ -25,18 +26,18 @@ data class RoutineResponse(
     val data: List<RoutineData>,
 )
 
-data class RoutineData(
-    val user: Long,
+@Serializable data class RoutineData(
+    val user: Long=0,
     @SerializedName("routine_name")
-    val routineName: String,
-    val completed: Boolean,
+    val routineName: String="",
+    val completed: Boolean = false,
     @SerializedName("start_date")
-    val startDate: String,
+    val startDate: String="",
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: String="",
     @SerializedName("routine_id")
-    val routineId: String,
-    val exercises: List<UserExercise>,
+    val routineId: String="",
+    val exercises: List<UserExercise> = emptyList(),
 ) {
 
     fun toRequest(exercises: List<UserExercise>): EditRoutineRequest{
@@ -92,7 +93,7 @@ data class RoutineData(
 }
 
 
-data class UserExercise(
+@Serializable data class UserExercise(
     val id: Long,
     val duration: String,
     val exercise: Exercise,
@@ -108,7 +109,7 @@ data class UserExercise(
 
 
 
-data class Exercise(
+@Serializable data class Exercise(
     val id: Long,
     val key: String,
     val name: String,

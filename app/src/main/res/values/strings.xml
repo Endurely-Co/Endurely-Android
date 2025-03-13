@@ -32,4 +32,6 @@
 
     <string name="btn_continue">Continue</string>
     <string name="mark_as_complete">Mark as Complete</string>
+    <string name="what_would_you_like_to_name_your_routine">What would you like to name your routine?</string>
+    <string name="enter_the_date_time_for_your_routine"><![CDATA[Enter the date & time for your routine]]></string>
 </resources>

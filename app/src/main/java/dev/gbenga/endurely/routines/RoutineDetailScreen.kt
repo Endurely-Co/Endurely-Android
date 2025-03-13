@@ -1,6 +1,5 @@
 package dev.gbenga.endurely.routines
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,7 +21,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,8 +31,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -44,9 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,15 +68,12 @@ import dev.gbenga.endurely.routines.data.duration
 import dev.gbenga.endurely.ui.buttons.EndureButton
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
 import dev.gbenga.endurely.ui.theme.largePadding
-import dev.gbenga.endurely.ui.theme.menuCardHeight
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.smallPadding
 import dev.gbenga.endurely.ui.theme.thinThickness
-import dev.gbenga.endurely.ui.theme.xLargePadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import kotlin.math.floor
 
 
 @Composable
@@ -141,7 +132,7 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
             }
     },
         onEditRequest = {
-
+            navigation.gotoEditRoutine(routineDetailUi.routineDataForEdit)
         }){
 
 

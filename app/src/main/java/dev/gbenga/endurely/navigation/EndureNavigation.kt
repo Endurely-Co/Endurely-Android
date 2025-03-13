@@ -5,7 +5,9 @@ import androidx.compose.runtime.remember
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import dev.gbenga.endurely.core.Tokens
+import dev.gbenga.endurely.routines.data.RoutineData
 
 
 @Composable
@@ -16,7 +18,7 @@ fun rememberEndureNavigation(): EndureNavigation{
 }
 
 
-class EndureNavigation(val navHostController:  NavHostController) {
+class EndureNavigation(val navHostController:  NavHostController, private val gson: Gson = Gson()) {
 
     fun gotoWelcome(){
         navHostController.navigate(Welcome){
@@ -64,6 +66,10 @@ class EndureNavigation(val navHostController:  NavHostController) {
         after.invoke()
     }
 
+    fun gotoEditRoutine(routineData: RoutineData){
+        navHostController.navigate(EditRoutine(gson.toJson(routineData)))
+    }
+
     fun gotoSignUp() = navHostController.navigate(SignUp)
 
     fun gotoDashboard() = pop { navHostController.navigate(Dashboard) }
@@ -72,3 +78,8 @@ class EndureNavigation(val navHostController:  NavHostController) {
 }
 
 // r@T419
+
+val json = Gson()
+inline fun <reified T> String.toType(): T{
+    return json.fromJson(this, T::class.java)
+}

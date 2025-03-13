@@ -119,24 +119,3 @@ fun TopBarSection(fullNameVal: UiState<String>, greeting: String, onInValidUser:
         else ->{}
     }
 }
-
-@Preview(device = Devices.PIXEL)
-@Composable
-fun PreviewDashboardScreenContent(){
-    DashboardScreenContent(DashboardUiState(dashboardMenus = listOf(
-        DashboardMenu(title = Tokens.trainingPlan,
-            bgColor = 0xFFE53935.toInt(),
-            clipArt = R.drawable.training_plan_ic),
-        DashboardMenu(title = Tokens.mealPlan,
-            bgColor = 0xFF66BB6A.toInt(),
-            clipArt = R.drawable.meal_plan_ic),
-        DashboardMenu(title = Tokens.fitnessRecommendation,
-            bgColor = 0xFF42A5F5.toInt(),
-            clipArt = R.drawable.fitness_recomm_ic),
-        DashboardMenu(title = Tokens.trackCalories,
-            bgColor = 0xFFE3C1A5.toInt(),
-            clipArt = R.drawable.calorie_tracker_ic)
-    )), signOutRequest = {}, onItemClick = {a, b ->}, addRoutineRequest = {}, onPageChanged = {},
-        isDarkTheme = false,
-        openMealScreen = {}){}
-}

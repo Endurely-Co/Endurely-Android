@@ -2,7 +2,7 @@ package dev.gbenga.endurely.routines.data
 
 import com.google.gson.annotations.SerializedName
 
-data class EditRoutineRequest(val user: Int,
+data class EditRoutineRequest(val user: Int=0,
                        val exercises: List<RoutineExercise>,
                        @SerializedName("routine_name")
                        val routineName: String,

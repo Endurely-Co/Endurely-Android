@@ -23,5 +23,7 @@ object Tokens {
     val daysOfWeek = listOf("Sun", "Mon", "Tues", "Wednes", "Thurs", "Fri", "Satur").map {
         "${it}day"
     }
+    const val save = "Save"
+    const val edit = "Update"
     val lowercaseDaysOfWeek = daysOfWeek.map { it.lowercase() }
 }

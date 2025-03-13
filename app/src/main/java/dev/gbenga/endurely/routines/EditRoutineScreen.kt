@@ -1,6 +1,5 @@
 package dev.gbenga.endurely.routines
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,14 +28,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gbenga.endurely.R
-import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.core.rememberDateTimeUtils
+import dev.gbenga.endurely.core.rememberDateUtils
 import dev.gbenga.endurely.navigation.EndureNavigation
+import dev.gbenga.endurely.routines.data.RoutineData
 import dev.gbenga.endurely.ui.EndurelyDatePicker
 import dev.gbenga.endurely.ui.buttons.EndurelyTextField
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
 import dev.gbenga.endurely.ui.buttons.TextFieldButton
+import dev.gbenga.endurely.ui.buttons.effect
 import dev.gbenga.endurely.ui.theme.largePadding
+import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.xLargePadding
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -46,22 +48,25 @@ import org.koin.androidx.compose.koinViewModel
 fun EditRoutineScreen (
     navigation: EndureNavigation,
     isDarkTheme: Boolean,
+    routineData: RoutineData,
     viewModel: EditRoutineViewModel = koinViewModel()){
 
     val editRoutineState by viewModel.editRoutineState.collectAsStateWithLifecycle()
 
-    var routineNameValue by remember { mutableStateOf("") }
-    var showDatePicker by remember { mutableStateOf(false) }
+    LaunchedEffect(routineData) {
+        viewModel.preloadEdit(routineData)
+    }
+
+    var routineNameValue by remember { mutableStateOf(routineData.routineName) }
+    var showDatePicker by remember { mutableStateOf(routineData.completed) }
     val dateFormater = rememberDateTimeUtils()
-    var dateValue by remember { mutableStateOf("Date") }
+    val dateUtilFormater = rememberDateUtils()
+    var dateValue by remember { mutableStateOf(dateUtilFormater.reverseServerDate(routineData.startDate)) }
     var showTimePicker by remember { mutableStateOf(false) }
-    var timeValue by remember { mutableStateOf("Time") }
+    var timeValue by remember { mutableStateOf(dateUtilFormater.reverseServerTime(routineData.startDate)) }
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     var showMessage by remember { mutableStateOf("") }
-
-
-    Log.d("addNewRoutine", "state: ${editRoutineState.selectedExercises}")
 
     LaunchedEffect(showMessage) {
         if (showMessage.isNotBlank()){
@@ -71,6 +76,18 @@ fun EditRoutineScreen (
         }
 
     }
+
+    LaunchedEffect(dateValue, routineNameValue) {
+        viewModel.validate(routineNameValue, dateValue, timeValue)
+    }
+
+    FitnessLoadingIndicator(show = editRoutineState.updateRoutine.effect(onError = {
+        coroutineScope.launch {
+            snackbarHostState.showSnackbar(it)
+        }
+    }) {
+        showMessage = it
+    })
 
     EndurelyDatePicker(showDatePicker, onDismissRequest = {
         showDatePicker = false
@@ -99,9 +116,9 @@ fun EditRoutineScreen (
         viewModel.setTime(hour, min)
     }
 
-    AddNewRoutineContent(addNewRoutineState = editRoutineState,
+    AddEditRoutineScaffold(addNewRoutineState = editRoutineState,
         onSubmitClick = {
-          //  viewModel.submitRoutine()
+            viewModel.editRoutine(routineNameValue)
         },
         snackbarHostState = snackbarHostState,
         onBackRequest={
@@ -110,13 +127,17 @@ fun EditRoutineScreen (
 
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(largePadding),
             verticalArrangement = Arrangement.spacedBy(
                 largePadding
             )
         ) {
             item {
+                Text(
+                    stringResource(R.string.what_would_you_like_to_name_your_routine), style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(bottom = normalPadding))
                 EndurelyTextField(
                     value = routineNameValue,
                     onValueChanged = {
@@ -130,28 +151,38 @@ fun EditRoutineScreen (
                 ConstraintLayout(modifier = Modifier.fillMaxWidth(),) {
                     val (routineDate, routineTime, routineDateTimeTile) = createRefs()
 
-                    Text("Routine date", style = MaterialTheme.typography.titleLarge, modifier = Modifier.constrainAs(routineDateTimeTile){
-                        start.linkTo(parent.start)
-                    })
+                    Text(
+                        stringResource(R.string.enter_the_date_time_for_your_routine), style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier
+                            .constrainAs(routineDateTimeTile) {
+                                start.linkTo(parent.start)
+                            }
+                            .padding(bottom = normalPadding))
 
                     TextFieldButton(onClick = {
                         showDatePicker = true
-                    }, modifier = Modifier.constrainAs(routineDate) {
-                        top.linkTo(routineDateTimeTile.bottom)
-                        start.linkTo(parent.start)
-                    }.fillMaxWidth(.4f),
+                    }, modifier = Modifier
+                        .constrainAs(routineDate) {
+                            top.linkTo(routineDateTimeTile.bottom)
+                            start.linkTo(parent.start)
+                        }
+                        .fillMaxWidth(.4f),
                         title = dateValue)
 
                     TextFieldButton(onClick = {
                         showTimePicker = true
-                    }, modifier = Modifier.constrainAs(routineTime) {
-                        top.linkTo(routineDateTimeTile.bottom)
-                        end.linkTo(parent.end)
-                    }.fillMaxWidth(.4f), title = timeValue)
+                    }, modifier = Modifier
+                        .constrainAs(routineTime) {
+                            top.linkTo(routineDateTimeTile.bottom)
+                            end.linkTo(parent.end)
+                        }
+                        .fillMaxWidth(.4f), title = timeValue)
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(top = xLargePadding),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = xLargePadding),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -189,23 +220,4 @@ fun EditRoutineScreen (
 
     }
 
-    LaunchedEffect(editRoutineState.addedNewRoutine) {
-        if (editRoutineState.addedNewRoutine is UiState.Success ){
-            navigation.pop()
-            // navigation.pop()
-        }
-    }
-
-    when(val addedNewRoutineUi = editRoutineState.addedNewRoutine){
-        is UiState.Failure ->{
-            showMessage = addedNewRoutineUi.message
-        }
-        is UiState.Loading ->{
-            showMessage =""
-            FitnessLoadingIndicator()
-        }
-        else ->{
-            showMessage =""
-        }
-    }
 }

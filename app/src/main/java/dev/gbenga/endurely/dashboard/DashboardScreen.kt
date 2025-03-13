@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -50,6 +51,7 @@ import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.Tokens
 import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.main.EndurelyBottomBar
+import dev.gbenga.endurely.meal.MealPlanScreen
 import dev.gbenga.endurely.navigation.Dashboard
 import dev.gbenga.endurely.navigation.EndureNavigation
 import dev.gbenga.endurely.routines.DashboardPages
@@ -70,6 +72,10 @@ fun DashboardScreen(nav: EndureNavigation,
     val signOut by viewModel.signOut.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+    val pagerState = rememberPagerState(pageCount = {3})
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
 
     LaunchedEffect(signOut) {
         when(signOut){
@@ -83,45 +89,67 @@ fun DashboardScreen(nav: EndureNavigation,
             else -> {/*Nothing*/}
         }
     }
-    DashboardScreenContent(dashboardUi, signOutRequest={
-        nav.gotoLogin(onTop = true)
-    }, onItemClick ={ routineId, title ->
-        Log.d("routineId", routineId)
-        nav.gotoRoutineDetails(routineId, title)
-    }, onPageChanged = {
-        viewModel.showAddRoutine(it)
-    }, isDarkTheme = isDarkTheme, addRoutineRequest = {
+
+    LaunchedEffect(pagerState.currentPage) {
+
+        viewModel.showAddRoutine(pagerState.currentPage)
+    }
+
+    val settingViewModel: SettingsViewModel = koinViewModel()
+    DashboardScreenContent(dashboardUi, onItemClick ={ page ->
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(page)
+        }
+    }, onPageChanged = { page ->
+        when(page){
+            DashboardPages.DASHBOARD ->  DashboardScreenList(dashboardUi, openMealScreen = {
+                nav.gotoMealPlan()
+            }, onInValidUser = {})
+            DashboardPages.GYM_ROUTINE -> {
+                RoutinesScreen(
+                    onItemClick = {routineId, title ->
+                        nav.gotoRoutineDetails(routineId, title)
+                    }){
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(it)
+                    }
+                }
+            }
+            DashboardPages.SETTINGS -> {
+                SettingsScreen {
+                    coroutineScope.launch {
+                        val action = snackbarHostState.showSnackbar(
+                            "Are sure you want to sign out?", actionLabel = "Sign Out",
+                            duration = SnackbarDuration.Short
+                        )
+                        if (action == SnackbarResult.ActionPerformed) {
+                            settingViewModel.signOut()
+                            nav.gotoLogin(onTop = true)
+                        }
+                    }
+                }
+            }
+        }
+    }, isDarkTheme = isDarkTheme,
+        snackbarHostState = snackbarHostState,
+        addRoutineRequest = {
         // add routine
         nav.gotoAddNewRoutine()
-    }, openMealScreen= {
-        when(it ){
-            2 ->  nav.gotoMealPlan()
-        }
-    }){
-        nav.gotoWelcome()
-    }
+    }, pagerState = pagerState)
 }
 
+//viewModel.showAddRoutine(it)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                            isDarkTheme: Boolean,
-                           openMealScreen: (Int) -> Unit,
-                           signOutRequest: () -> Unit,
-                           onPageChanged: (Int) -> Unit,
-                           onItemClick: (String, String) -> Unit,
+                           pagerState: PagerState,
+                           snackbarHostState: SnackbarHostState,
+                           onPageChanged: @Composable (Int) -> Unit,
+                           onItemClick: (Int) -> Unit,
                            addRoutineRequest: () -> Unit,
-                           onInValidUser: () -> Unit,
                            ){
-    val pagerState = rememberPagerState(pageCount = {3})
-    val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-
-
-    LaunchedEffect(pagerState.currentPage) {
-        onPageChanged(pagerState.currentPage)
-    }
 
 
     Scaffold(
@@ -152,9 +180,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
                        },
         bottomBar = {
             EndurelyBottomBar(onItemClick = {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(it)
-                }
+                onItemClick(it)
             })
         },
         topBar = {
@@ -183,37 +209,9 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
             }, modifier = Modifier.height(80.dp))
         }
     ) {
-        val coroutineScope = rememberCoroutineScope()
-       val viewModel: SettingsViewModel = koinViewModel()
-
        HorizontalPager(pagerState, modifier = Modifier.padding(it),
            userScrollEnabled = false, beyondViewportPageCount = 2) { page ->
-           when(page){
-               DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUiState,
-                   openMealScreen=openMealScreen, onInValidUser)
-               DashboardPages.GYM_ROUTINE -> {
-                   RoutinesScreen(
-                       onItemClick = onItemClick){
-                       coroutineScope.launch {
-                           snackbarHostState.showSnackbar(it)
-                       }
-                   }
-               }
-               DashboardPages.SETTINGS -> {
-                   SettingsScreen(viewModel) {
-                       coroutineScope.launch {
-                           val action = snackbarHostState.showSnackbar(
-                               "Are sure you want to sign out?", actionLabel = "Sign Out",
-                               duration = SnackbarDuration.Short
-                           )
-                           if (action == SnackbarResult.ActionPerformed) {
-                               viewModel.signOut()
-                               signOutRequest()
-                           }
-                       }
-                   }
-               }
-           }
+           onPageChanged(page)
        }
     }
 }

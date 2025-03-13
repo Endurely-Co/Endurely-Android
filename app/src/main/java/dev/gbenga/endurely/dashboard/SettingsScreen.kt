@@ -28,9 +28,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.xLargePadding
+import org.koin.androidx.compose.koinViewModel
 
 @Composable //
-fun SettingsScreen(viewModel: SettingsViewModel, signOutRequest: () -> Unit) {
+fun SettingsScreen(viewModel: SettingsViewModel = koinViewModel(), signOutRequest: () -> Unit) {
     val settingsUi by viewModel.settingsUi.collectAsStateWithLifecycle()
     LazyColumn(modifier = Modifier.padding(horizontal = xLargePadding, vertical = xLargePadding).fillMaxSize()) {
 

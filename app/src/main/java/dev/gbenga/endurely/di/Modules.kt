@@ -18,6 +18,7 @@ import dev.gbenga.endurely.onboard.login.LoginViewModel
 import dev.gbenga.endurely.onboard.signup.SignUpViewModel
 import dev.gbenga.endurely.onboard.welcome.WelcomeViewModel
 import dev.gbenga.endurely.routines.AddNewRoutineViewModel
+import dev.gbenga.endurely.routines.EditRoutineViewModel
 import dev.gbenga.endurely.routines.ExerciseSuggestionsViewModel
 import dev.gbenga.endurely.routines.RoutineDetailViewModel
 import dev.gbenga.endurely.routines.RoutineRepository
@@ -55,4 +56,5 @@ val onboardModule = module {
     viewModel { ExerciseSuggestionsViewModel(get()) }
     viewModel { (handle: SavedStateHandle) -> MealPlanViewModel(get(), get(), get(), handle) }
     viewModel { MealPlanDetailsViewModel(get()) }
+    viewModel { EditRoutineViewModel(get(), get()) }
 }

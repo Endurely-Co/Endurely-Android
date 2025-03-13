@@ -98,7 +98,7 @@ fun TextFieldButton(title: String,
         .height(textFieldNormal)
         .padding(horizontal = largePadding), verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.Start) {
-        Text(title, style = MaterialTheme.typography.bodyMedium,)
+        Text(title, style = MaterialTheme.typography.bodyMedium, maxLines = 1)
     }
 }
 

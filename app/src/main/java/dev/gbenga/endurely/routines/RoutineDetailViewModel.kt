@@ -35,11 +35,7 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
         _routineDetail.update { it.copy(statusCount = Pair(complete, inProgress)) }
     }
 
-    fun editRoutine(){
-
-    }
-
-    fun markComplete(name: String){~
+    fun markComplete(name: String){
         _exerciseDetailsUi.update { it.copy(
             markComplete = UiState.Loading()) }
        runInScope {
@@ -119,7 +115,8 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
                     this.routine = routine.data
                     _routineDetail.update { it.copy(userExercises
                     = UiState.Success(routine.data.data.first().exercises),
-                        statusCount = Pair(completedCount, inProgressCount)) }
+                        statusCount = Pair(completedCount, inProgressCount),
+                        routineDataForEdit = routine.data.data.first()) }
                 }
                 is RepoState.Error ->{
                     _routineDetail.update { it.copy(userExercises = UiState.Failure(routine.errorMsg)) }
