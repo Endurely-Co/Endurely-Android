@@ -67,6 +67,7 @@ import dev.gbenga.endurely.routines.data.UserExercise
 import dev.gbenga.endurely.routines.data.duration
 import dev.gbenga.endurely.ui.buttons.EndureButton
 import dev.gbenga.endurely.ui.buttons.FitnessLoadingIndicator
+import dev.gbenga.endurely.ui.theme.appColor
 import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.normalRadius
@@ -80,6 +81,7 @@ import org.koin.androidx.compose.koinViewModel
 fun RoutineDetailScreen(navigation: EndureNavigation,
                         title: String,
                         routineId: String,
+                        isDarkTheme: Boolean,
                         viewModel: RoutineDetailViewModel = koinViewModel()){
     val routineDetailUi by viewModel.routineDetail.collectAsStateWithLifecycle()
 
@@ -170,7 +172,7 @@ fun RoutineDetailScreen(navigation: EndureNavigation,
         LazyColumn (modifier = Modifier,
             state = listState) {
             item {
-                ExpandedTopBar(title)
+                ExpandedTopBar(title, isDarkTheme = isDarkTheme)
             }
             item {
                 val density = LocalDensity.current
@@ -298,10 +300,10 @@ fun RoutineDetailItem(userExercise: UserExercise, onClickExercise: (UserExercise
 }
 
 @Composable
-private fun ExpandedTopBar(title: String) {
+private fun ExpandedTopBar(title: String, isDarkTheme: Boolean) {
     Box(
         modifier = Modifier
-            .background(Color(0xffB3E5FC))
+            .background( appColor(isDarkTheme).routineMainImageBg)//Color(0xffB3E5FC))
             .fillMaxWidth()
             .fillMaxHeight(.2f),
         contentAlignment = Alignment.BottomStart

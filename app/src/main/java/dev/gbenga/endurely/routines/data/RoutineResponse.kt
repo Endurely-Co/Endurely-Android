@@ -52,7 +52,8 @@ data class RoutineResponse(
                     userExerciseId = exercise.id
                     )
             },
-            user = 0
+            user = 0,
+            mealDateTime = startDate
         )
     }
 
@@ -94,10 +95,10 @@ data class RoutineResponse(
 
 
 @Serializable data class UserExercise(
-    val id: Long,
+    val id: Long, // USER EXERCISE ID
     val duration: String,
     val exercise: Exercise,
-    val completed: Boolean
+    val completed: Boolean = false
 ){
 
     fun status() = if (completed) {

@@ -107,8 +107,10 @@ fun ExerciseSuggestions(
         ) {
             ConstraintLayout(modifier = Modifier
                 .fillMaxSize()
-                .padding(normalPadding)) {
-                val (searchField, suggestions, timeDate, title, dateTimeTitle) = createRefs()
+                .padding(largePadding)) {
+                val (searchField, suggestions, timeDate,
+                    title, dateTimeTitle, searchedTextTitle,
+                    ) = createRefs()
 
                 Row(    modifier = Modifier
                     .constrainAs(title) {
@@ -116,11 +118,11 @@ fun ExerciseSuggestions(
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
-                    .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("Add Exercise",
-                        style = MaterialTheme.typography.bodyLarge,
-
-                        ) //"Save"
+                    .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Add New Exercise",
+                        style = MaterialTheme.typography.titleMedium,) //"Save"
                     EndureOutlinedButton (onClick = {
                         if (listOf(selectedExercise.first, duration).all { d -> d.isNotBlank() }
                             && selectedExercise.second != 0L){
@@ -133,10 +135,16 @@ fun ExerciseSuggestions(
                     }, text = "Save")
                 }
 
-
+                Text("Select an exercise",
+                    style = MaterialTheme.typography.titleMedium,modifier = Modifier
+                        .constrainAs(searchedTextTitle) {
+                            top.linkTo(title.bottom, largePadding)
+                            start.linkTo(parent.start)
+                           // end.linkTo(parent.end)
+                        })
                 TextField(value = searchedText,
                     singleLine = true,
-                    placeholder = { Text("Search for exercise") },
+                    placeholder = { Text("Select a new exercise") },
                     shape = RoundedCornerShape(normalRadius),
                     textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.W700),
                     visualTransformation =  VisualTransformation.None,
@@ -147,17 +155,17 @@ fun ExerciseSuggestions(
                         viewModel.search(value.text)
                     }, modifier = Modifier
                         .constrainAs(searchField) {
-                            top.linkTo(title.bottom, largePadding)
+                            top.linkTo(searchedTextTitle.bottom, normalPadding)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }
                         .fillMaxWidth()
                         .focusRequester(textField))
 
-                Text("", modifier = Modifier.constrainAs(dateTimeTitle){
+                Text("How long do you want to exercise?", modifier = Modifier.constrainAs(dateTimeTitle){
                     top.linkTo(searchField.bottom, largePadding)
                     start.linkTo(parent.start)
-                    end.linkTo(parent.end)
+                   // end.linkTo(parent.end)
                 })
                 ExerciseDuration(modifier = Modifier
                     .constrainAs(timeDate) {
@@ -235,9 +243,9 @@ fun ExerciseDuration(modifier: Modifier =Modifier, onTimeChanged: (String) -> Un
 
     Row(modifier =modifier, horizontalArrangement = Arrangement.spacedBy(largePadding)) {
         EndurelyTextField(minsValue,
-            label = R.string.lb_minutes,
+            label = R.string.lb_hours,
             modifier = Modifier
-                .fillMaxWidth(.3f),
+                .weight(1f),
             keyboardType = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)) {
             if (it.isBlank()){
                 minsValue = ""
@@ -249,9 +257,9 @@ fun ExerciseDuration(modifier: Modifier =Modifier, onTimeChanged: (String) -> Un
             }
         }
         EndurelyTextField(hrsValue,
-            label = R.string.lb_hours,
+            label = R.string.lb_minutes,
             modifier = Modifier
-                .fillMaxWidth(.35f),
+                .weight(1f),
             keyboardType = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)) {
             if (it.isBlank()){
                 hrsValue = ""

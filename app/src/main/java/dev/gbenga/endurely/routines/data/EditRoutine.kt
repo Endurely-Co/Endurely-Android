@@ -8,11 +8,13 @@ data class EditRoutineRequest(val user: Int=0,
                        val routineName: String,
                        @SerializedName("routine_id")
                        val routineId: String,
+    @SerializedName("meal_date_time")
+    val mealDateTime: String
 )
 
 data class RoutineExercise(
     @SerializedName("user_exercise_id")
-    val userExerciseId: Long,
+    val userExerciseId: Long? =null,
     val duration: String,
     val id: Long,
     val completed: Boolean,

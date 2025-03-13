@@ -15,7 +15,9 @@ data class AddRoutineRequest(
 
 data class NewExercise(
     val duration: String,
-    val id: Long,
+    val id: Long= 0,
+    val userExerciseId: Long? =null,
+    val completed: Boolean = false,
 )
 
 data class NewExerciseName(val name: String, val exercise: NewExercise)

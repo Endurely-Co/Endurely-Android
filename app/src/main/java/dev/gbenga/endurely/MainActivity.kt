@@ -108,7 +108,7 @@ class MainActivity : ComponentActivity() {
                         val args = it.toRoute<RoutineDetail>()
 
                         RoutineDetailScreen(navHost, routineId = args.routineId,
-                            title = args.pageTitle) }
+                            title = args.pageTitle, isDarkTheme =isDarkMode) }
                 }
             }
         }

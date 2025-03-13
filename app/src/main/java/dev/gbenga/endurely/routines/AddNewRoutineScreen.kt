@@ -233,6 +233,7 @@ fun AddNewRoutineScreen(navigation: EndureNavigation, isDarkTheme: Boolean,
 
 @Composable
 fun <T: RoutineCommonState> AddEditRoutineScaffold(addNewRoutineState: T,
+                                                   isDarkMode: Boolean =false,
                                                    snackbarHostState: SnackbarHostState,
                                                    onSubmitClick: () -> Unit,
                                                    onBackRequest: () -> Unit,
@@ -240,6 +241,7 @@ fun <T: RoutineCommonState> AddEditRoutineScaffold(addNewRoutineState: T,
 ){
 
     GymScaffold(
+        isDarkMode = isDarkMode,
         snackbarHostState = snackbarHostState,
         onBackRequest =onBackRequest,
         pageTitle = "New Routine",

@@ -13,6 +13,7 @@ import dev.gbenga.endurely.routines.data.RoutineExercise
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.random.Random
 
 class EditRoutineViewModel(
     private val dateTimeUtils: DateTimeUtils,
@@ -25,7 +26,8 @@ class EditRoutineViewModel(
     fun preloadEdit(routineData: RoutineData){
         val exercises = ArrayList(routineData.exercises.map {  exercise ->
             NewExerciseName(name = exercise.exercise.name, NewExercise(dateTimeUtils
-                .serverDuration(exercise.duration), exercise.id), )
+                .serverDuration(exercise.duration), exercise.exercise.id,
+                completed = exercise.completed, userExerciseId = exercise.id), )
         })
         _editRoutineState.update { it.copy(oldEditRoutine = routineData,
             selectedExercises = exercises) }
@@ -63,7 +65,8 @@ class EditRoutineViewModel(
         }
 
         _editRoutineState.update {
-            it.copy(selectedExercises = updatedList) }
+            it.copy(selectedExercises = updatedList,
+                enableSubmit = it.enableSubmit && updatedList.isNotEmpty()) }
 
     }
 
@@ -75,24 +78,32 @@ class EditRoutineViewModel(
         }
 
         _editRoutineState.update {
-            it.copy(selectedExercises = updatedList) }
+            it.copy(selectedExercises = updatedList,
+                enableSubmit = it.enableSubmit && updatedList.isNotEmpty()) }
     }
 
-    fun editRoutine(newRoutineName: String,){
+    fun editRoutine(newRoutineName: String, time: String, date: String){
         _editRoutineState.update { it.copy(updateRoutine = UiState.Loading()) }
 
         runInScope {
            val selectedExIds = _editRoutineState.value.selectedExercises
                .map { it.exercise.id }
+            Log.d("selectedExIds", "selectedExIds -> $selectedExIds")
            when(val editComplete = routineRepository.editRoutine(
                EditRoutineRequest(
+                   mealDateTime = dateTimeUtils.getServerTime(time, date),
                    routineName = newRoutineName,
                    routineId = _editRoutineState.value.oldEditRoutine.routineId,
-                   exercises = _editRoutineState.value.oldEditRoutine.exercises.map { userExercise ->
-                       RoutineExercise(userExerciseId = userExercise.id,
-                           duration = userExercise.duration,
+                   exercises = _editRoutineState.value.selectedExercises.map { userExercise ->
+//                       val exercise = _editRoutineState.value.oldEditRoutine.exercises.firstOrNull { ex ->
+//                           ex.exercise.id == userExercise.exercise.id}
+
+                       Log.d("selectedExIds", "selectedExIds -> ${userExercise} ${userExercise.exercise.id}")
+
+                       RoutineExercise(userExerciseId = userExercise.exercise.userExerciseId,
+                           duration = userExercise.exercise.duration,
                            id = userExercise.exercise.id,
-                           completed = userExercise.completed)
+                           completed = userExercise.exercise.completed)
                    }//.filter { ex -> selectedExIds.contains(ex.id) }
                ))){
                is RepoState.Success ->{

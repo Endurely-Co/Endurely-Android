@@ -42,6 +42,26 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
         return timeFormat.format(Date(timeInMillis))
     }
 
+    fun getTime(timeStr: String): Pair<Int, Int>{
+        val time = timeFormat.parse(timeStr)
+        val hourMin = Pair(0, 0)
+        return time?.let {
+            calendar.time = it
+            hourMin.copy(calendar[Calendar.MINUTE], calendar[Calendar.MINUTE])
+        } ?: hourMin
+    }
+
+
+    fun getServerTime(timeStr: String, dateStr: String): String{
+        val date = dateFormat.parse(dateStr) ?: Date()
+        val (hour, minute) = getTime(timeStr)
+//        calendar.time = date
+//        calendar[Calendar.MINUTE] = minute
+//        calendar[Calendar.HOUR_OF_DAY] = hour
+        return getServerTime(hour, minute, date.time)
+    }
+
+    //dateFormat
 
 
     fun getTime(minute: Int, hour: Int): String = calendar.let {
@@ -52,12 +72,10 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
     }
 
 
-    fun serverDuration(duration: String): String = calendar.let {
-        val timeFormat: DateFormat = SimpleDateFormat("hh:mm:ss", Locale.getDefault())
+    fun serverDuration(duration: String): String {
+       // val timeFormat: DateFormat = SimpleDateFormat("hh:mm:ss", Locale.getDefault())
         val durationSegs = duration.split(":")
-        it[Calendar.MINUTE] = durationSegs[0].toInt()
-        it[Calendar.HOUR_OF_DAY] = durationSegs[1].toInt()
-        return timeFormat.format(it.time)
+        return if (durationSegs.size > 2) duration else  duration.plus(":00")
     }
 
 }
@@ -97,7 +115,9 @@ class DateUtilsNames( private val dateUtils: DateUtils,
         dayNameFormat.format(it)
     } ?: ""
 
-    fun getToday() = dayNameFormat.format(System.currentTimeMillis())
+    fun getToday(): String {
+        return dayNameFormat.format(System.currentTimeMillis())
+    }
 }
 
 

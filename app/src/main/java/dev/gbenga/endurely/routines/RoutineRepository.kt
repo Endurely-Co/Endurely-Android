@@ -48,7 +48,7 @@ class RoutineRepository(private val routinesService: RoutinesService,
     }
 
     suspend fun editRoutine(routine: EditRoutineRequest) = repoContext {
-        Log.d("editRoutine", "$routine")
+        Log.d("editRoutine", "${Gson().toJson(routine)}")
         routinesService.editRoutine(getUser().userId, routine.copy(user = getUser().userId))
     }
 

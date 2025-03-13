@@ -40,6 +40,7 @@ import dev.gbenga.endurely.ui.buttons.effect
 import dev.gbenga.endurely.ui.theme.largePadding
 import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.xLargePadding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -109,15 +110,16 @@ fun EditRoutineScreen (
         viewModel.setTime(hour, min)
     }
 
-    AddEditRoutineScaffold(addNewRoutineState = editRoutineState,
+    AddEditRoutineScaffold(
+        isDarkMode = isDarkTheme,
+        addNewRoutineState = editRoutineState,
         onSubmitClick = {
-            viewModel.editRoutine(routineNameValue)
+            viewModel.editRoutine(routineNameValue, timeValue, dateValue)
         },
         snackbarHostState = snackbarHostState,
         onBackRequest={
             navigation.pop()
         }) {
-
 
         LazyColumn(
             modifier = Modifier
@@ -217,6 +219,11 @@ fun EditRoutineScreen (
             }
         }) {
             showMessage = it
+            LaunchedEffect(showMessage) {
+                coroutineScope.launch {
+                    delay(3000)
+                navigation.pop()
+            } }
         })
     }
 
