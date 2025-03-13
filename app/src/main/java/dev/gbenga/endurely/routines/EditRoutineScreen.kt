@@ -81,13 +81,6 @@ fun EditRoutineScreen (
         viewModel.validate(routineNameValue, dateValue, timeValue)
     }
 
-    FitnessLoadingIndicator(show = editRoutineState.updateRoutine.effect(onError = {
-        coroutineScope.launch {
-            snackbarHostState.showSnackbar(it)
-        }
-    }) {
-        showMessage = it
-    })
 
     EndurelyDatePicker(showDatePicker, onDismissRequest = {
         showDatePicker = false
@@ -218,6 +211,13 @@ fun EditRoutineScreen (
 
         }
 
+        FitnessLoadingIndicator(show = editRoutineState.updateRoutine.effect(onError = {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(it)
+            }
+        }) {
+            showMessage = it
+        })
     }
 
 }
