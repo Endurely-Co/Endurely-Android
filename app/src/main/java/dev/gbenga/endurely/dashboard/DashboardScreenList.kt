@@ -1,16 +1,23 @@
 package dev.gbenga.endurely.dashboard
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
@@ -35,70 +43,26 @@ import dev.gbenga.endurely.ui.theme.menuCardHeight
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.xLargePadding
 
-
 @Composable
 fun DashboardScreenList(dashboardUiState: DashboardUiState,
+                        isDarkTheme: Boolean,
                         openMealScreen: (Int) -> Unit,
                         onInValidUser: () -> Unit){
 
     val scrollState = rememberLazyListState()
+    val context = LocalContext.current
+    val verticalScrollState = rememberScrollState()
 
-    LazyColumn(modifier = Modifier
-        .padding()
-        .padding(xLargePadding),
-        state = scrollState,
-        verticalArrangement = Arrangement.spacedBy(
-            largePadding
-        ), ) {
-        item{
-            TopBarSection(dashboardUiState.fullName, dashboardUiState.greeting, onInValidUser)
-        }
-        dashboardUiState.dashboardMenus.let { menus ->
-            items(menus.size){ index ->
-                val bgColor = Color((menus[index].bgColor))
-                ConstraintLayout(modifier = Modifier
-                    .clip(
-                        RoundedCornerShape(normalRadius)
-                    )
-                    .shadow(
-                        shape = RectangleShape, elevation = 3.dp,
-                        spotColor = bgColor
-                    ).animateItem()
+    Column(modifier = Modifier
+        .padding(xLargePadding)
+        .verticalScroll(verticalScrollState),
+        verticalArrangement = Arrangement.SpaceBetween, ) {
+        TopBarSection(dashboardUiState.fullName, dashboardUiState.greeting, onInValidUser)
 
-                    .background(Color((menus[index].bgColor)))
-                    .fillMaxWidth()
-                    .height(menuCardHeight)
-                    .clickable {
-                        openMealScreen(index)
-                    }) {
-                    val (title, clipArt) = createRefs()
-                    Text(menus[index].title, style = MaterialTheme.typography
-                        .headlineLarge.copy(fontWeight = FontWeight.Bold), modifier = Modifier.constrainAs(title){
-                        if (index % 2 == 0){
-                            start.linkTo(parent.start, largePadding)
-                            // end.linkTo(clipArt.start)
-                        }else{
-                            //end.linkTo(parent.end)
-                            start.linkTo(clipArt.end, largePadding)
-                        }
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                    })
-                    Image(painter = painterResource(menus[index].clipArt), modifier = Modifier
-                        .constrainAs(clipArt) {
-                            if (index % 2 == 0) {
-                                start.linkTo(title.end, largePadding)
-                                // end.linkTo(clipArt.start)
-                            } else {
-                                start.linkTo(parent.start, largePadding)
-                            }
-                            bottom.linkTo(parent.bottom)
-                        }
-                        .height(menuCardHeight)
-                        .size(120.dp), contentDescription = menus[index].title)
-                }
-            }
-        }
+        NewDashboardScreen(0,
+            dashboardUiState.statsSummary,
+            isDarkTheme,
+            dashboardUiState.dashboardMenus, openMealScreen)
 
     }
 }

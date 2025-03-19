@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -102,7 +103,9 @@ fun DashboardScreen(nav: EndureNavigation,
         }
     }, onPageChanged = { page ->
         when(page){
-            DashboardPages.DASHBOARD ->  DashboardScreenList(dashboardUi, openMealScreen = {
+            DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUi,
+                isDarkTheme,
+                openMealScreen = {
                 nav.gotoMealPlan()
             }, onInValidUser = {})
             DashboardPages.GYM_ROUTINE -> {
@@ -209,7 +212,7 @@ fun DashboardScreenContent(dashboardUiState: DashboardUiState,
             }, modifier = Modifier.height(80.dp))
         }
     ) {
-       HorizontalPager(pagerState, modifier = Modifier.padding(it),
+       HorizontalPager(pagerState, modifier = Modifier.padding(it).fillMaxSize(),
            userScrollEnabled = false, beyondViewportPageCount = 2) { page ->
            onPageChanged(page)
        }

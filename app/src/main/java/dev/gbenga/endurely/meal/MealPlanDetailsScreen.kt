@@ -93,7 +93,7 @@ fun MealPlanDetailsContent(mealDetailPlanUi: MealPlanDetailsState,
                         Card(modifier = Modifier.fillMaxWidth().padding(bottom = normalPadding)) {
                             Text(
                                 detail.nutrients.otherNutrients,
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.fillMaxWidth().padding(normalPadding)
                             )
                         }

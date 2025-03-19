@@ -12,6 +12,13 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        val statusCode = 200
+        assertEquals(200, statusCode)
+    }
+
+    @Test
+    fun addition_isInCorrect() {
+        val statusCode = 404
+        assertEquals(200, statusCode)
     }
 }

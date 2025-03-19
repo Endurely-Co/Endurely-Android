@@ -9,13 +9,13 @@ class Greeting {
         return calendar[Calendar.HOUR_OF_DAY].let { hour ->
             "Good ${when (hour) {
                 in 0..< 12 -> {
-                    "morning"
+                    "morning \uD83C\uDF05"
                 }
                 in 12..<17 -> {
-                    "afternoon"
+                    "afternoon \uD83C\uDF07"
                 }
                 else -> {
-                    "evening"
+                    "evening \uD83C\uDF05"
                 }
             }},"
         }

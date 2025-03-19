@@ -45,19 +45,11 @@ class DashboardViewModel(private val dashboardRepository: DashboardRepository,
 
         _dashboardUi.update {
             it.copy(dashboardMenus = listOf(
-                DashboardMenu(title = Tokens.trainingPlan,
-                    bgColor = 0xFFE53935.toInt(),
-                    clipArt = R.drawable.training_plan_ic),
-                DashboardMenu(title = Tokens.trackCalories,
-                    bgColor = 0xFFE3C1A5.toInt(),
-                    clipArt = R.drawable.calorie_tracker_ic),
                 DashboardMenu(title = Tokens.mealPlan,
-                    bgColor = 0xFF66BB6A.toInt(),
-                    clipArt = R.drawable.meal_plan_ic),
-                DashboardMenu(title = Tokens.fitnessRecommendation,
-                    bgColor = 0xFF42A5F5.toInt(),
-                    clipArt = R.drawable.fitness_recomm_ic),
-            ), greeting = greeting.getGreeting(), pageTitles = listOf(Tokens.dashboard, Tokens.gymRoutine, Tokens.settings)
+                    bgColor = 0xFF5C6BC0.toInt(),
+                    clipArt = R.drawable.meal_plan_ic)
+            ), greeting = greeting.getGreeting(),
+                pageTitles = listOf(Tokens.dashboard, Tokens.gymRoutine, Tokens.settings)
             )
         }
 

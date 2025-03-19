@@ -37,17 +37,22 @@ val Pink40 = Color(0xFF7D5260)
 
 data class AppColor(val defaultCard: Color = Color.White,
                     val snackBg: Color = Color(SnackBarDark),
-    val routineMainImageBg: Color = Color.Gray )
+    val routineMainImageBg: Color = Color.Gray,
+    val iconBgColor : Color = Color.White
+)
 
 @Composable
 fun appColor(darkTheme: Boolean = isSystemInDarkTheme()): AppColor{
     return remember {
         when {
             darkTheme -> AppColor(defaultCard = Color(0xFF212121),
-                snackBg = Color(SnackBarDark), routineMainImageBg = Color(0xffB3E5FC))
+                snackBg = Color(SnackBarDark),
+                routineMainImageBg = Color(0xffB3E5FC),
+                iconBgColor = Color(SnackBarDark))
             else -> AppColor(defaultCard = Color(0XFFECF0F1),
                 snackBg = Color(SnackBarLight  ),
-                routineMainImageBg = Color(0xFF2196F3)
+                routineMainImageBg = Color(0xFF2196F3),
+                iconBgColor = Color(0xffB3E5FC)
             )
         }
     }
