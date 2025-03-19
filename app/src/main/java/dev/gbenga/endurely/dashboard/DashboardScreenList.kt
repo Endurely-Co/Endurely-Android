@@ -54,7 +54,7 @@ fun DashboardScreenList(dashboardUiState: DashboardUiState,
     val verticalScrollState = rememberScrollState()
 
     Column(modifier = Modifier
-        .padding(xLargePadding)
+        .padding(horizontal = xLargePadding)
         .verticalScroll(verticalScrollState),
         verticalArrangement = Arrangement.SpaceBetween, ) {
         TopBarSection(dashboardUiState.fullName, dashboardUiState.greeting, onInValidUser)
