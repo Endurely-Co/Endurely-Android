@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.gbenga.endurely.onboard.data.RepoState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -16,7 +17,7 @@ abstract class NewEndureNavViewModel<T>() : EndureNavViewModel() {
 
 abstract class EndureNavViewModel( savedStateHandle: SavedStateHandle? = null) : ViewModel() {
 
-    inline fun runInScope(crossinline run: suspend () -> Unit): Job = viewModelScope.launch { run() }
+    inline fun runInScope(crossinline run: suspend CoroutineScope. () -> Unit): Job = viewModelScope.launch { run() }
 
 
     protected suspend fun <T> repoToVMState(block: suspend () -> RepoState<T>): UiState<T>{

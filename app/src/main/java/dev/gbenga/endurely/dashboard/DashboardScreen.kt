@@ -104,7 +104,9 @@ fun DashboardScreen(nav: EndureNavigation,
     }, onPageChanged = { page ->
         when(page){
             DashboardPages.DASHBOARD -> DashboardScreenList(dashboardUi,
-                isDarkTheme,
+                onOpenMealDetails = {
+                    nav.gotoMealPlanDetails(it)
+                },
                 openMealScreen = {
                 nav.gotoMealPlan()
             }, onInValidUser = {})

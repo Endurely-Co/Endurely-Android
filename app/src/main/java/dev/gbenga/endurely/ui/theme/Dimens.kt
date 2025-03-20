@@ -19,3 +19,4 @@ val btnNormal = 50.dp
 val textFieldNormal = 60.dp
 val routineImageWidth = 130.dp
 val routineImageHeight = 100.dp
+val iconSize = 50.dp

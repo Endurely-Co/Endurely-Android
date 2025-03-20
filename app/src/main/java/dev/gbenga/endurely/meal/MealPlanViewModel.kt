@@ -130,7 +130,7 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
            when(val nutrients = mealPlanRepository
                .requestFoodNutrients(NutrientFromMealRequest(meal = meal))){
                is RepoState.Success ->{
-                   this.nutrients = nutrients.data.data.nutrients.apply {
+                   this@MealPlanViewModel.nutrients = nutrients.data.data.nutrients.apply {
                        _mealPlanUi.update { it.copy(
                            mealNutrients = UiState.Success(this),
                            button = ButtonAction.AddMeal())

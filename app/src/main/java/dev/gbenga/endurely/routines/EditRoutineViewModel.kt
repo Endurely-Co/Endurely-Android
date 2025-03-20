@@ -88,7 +88,7 @@ class EditRoutineViewModel(
         runInScope {
            val selectedExIds = _editRoutineState.value.selectedExercises
                .map { it.exercise.id }
-            Log.d("selectedExIds", "selectedExIds -> $selectedExIds")
+
            when(val editComplete = routineRepository.editRoutine(
                EditRoutineRequest(
                    mealDateTime = dateTimeUtils.getServerTime(time, date),

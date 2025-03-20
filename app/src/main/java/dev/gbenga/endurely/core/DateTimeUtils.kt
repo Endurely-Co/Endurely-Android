@@ -22,10 +22,17 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
         return dateFormat.format(Date(dateInMillis)) ?: ""
     }
 
+    fun getDateSubOne(dateInMillis: Long): String {
+        calendar.timeInMillis = dateInMillis
+        calendar.add(Calendar.DAY_OF_WEEK, -1)
+        return dateFormat.format(Date(calendar.timeInMillis)) ?: ""
+    }
+
     fun getDateMillis(): Long = dateInMillis
 
     fun parseDateTime(hour: Int,minute: Int, date: Long) = calendar.apply {
         timeInMillis = date
+        this.add(Calendar.DAY_OF_WEEK, -1)
         this[Calendar.MINUTE] = minute
         this[Calendar.HOUR_OF_DAY] = hour
     }.timeInMillis
@@ -38,9 +45,12 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
         return serverDateFormat.format(dateInMillis)
     }
 
+
     fun getTime(timeInMillis: Long): String {
         return timeFormat.format(Date(timeInMillis))
     }
+
+
 
     fun getTime(timeStr: String): Pair<Int, Int>{
         val time = timeFormat.parse(timeStr)
@@ -106,6 +116,13 @@ class DateUtils( private val serverDateFormat:
 }
 
 class DateUtilsNames( private val dateUtils: DateUtils,
+                      private val dateTimeUtils: DateTimeUtils = DateTimeUtils(),
+                      private val serverDateOnly:
+                      DateFormat = SimpleDateFormat("yyyy-MM-dd",
+                          Locale.getDefault()),
+                      private val eeeMMM:
+                      DateFormat = SimpleDateFormat("EEE, MMM",
+                          Locale.getDefault()),
                       private val dayNameFormat:
                       DateFormat = SimpleDateFormat("EEEE",
                           Locale.getDefault())){
@@ -118,6 +135,8 @@ class DateUtilsNames( private val dateUtils: DateUtils,
     fun getToday(): String {
         return dayNameFormat.format(System.currentTimeMillis())
     }
+
+    fun getDayMonth(date: String): String =serverDateOnly.parse(date.split("T").first())?.let { eeeMMM.format(it) } ?: ""
 }
 
 

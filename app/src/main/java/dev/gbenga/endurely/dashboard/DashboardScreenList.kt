@@ -45,41 +45,32 @@ import dev.gbenga.endurely.ui.theme.xLargePadding
 
 @Composable
 fun DashboardScreenList(dashboardUiState: DashboardUiState,
-                        isDarkTheme: Boolean,
+                        onOpenMealDetails: (String) -> Unit,
                         openMealScreen: (Int) -> Unit,
                         onInValidUser: () -> Unit){
 
     val scrollState = rememberLazyListState()
     val context = LocalContext.current
-    val verticalScrollState = rememberScrollState()
 
-    Column(modifier = Modifier
-        .padding(horizontal = xLargePadding)
-        .verticalScroll(verticalScrollState),
-        verticalArrangement = Arrangement.SpaceBetween, ) {
-        TopBarSection(dashboardUiState.fullName, dashboardUiState.greeting, onInValidUser)
-
-        NewDashboardScreen(0,
-            dashboardUiState.statsSummary,
-            isDarkTheme,
-            dashboardUiState.dashboardMenus, openMealScreen)
-
-    }
+    NewDashboardScreen(dashboardUiState,
+        dashboardUiState.homeScreenMeal, onInValidUser, openMealScreen, onOpenMealDetails)
 }
 
 @Composable
-fun TopBarSection(fullNameVal: UiState<String>, greeting: String, onInValidUser: () -> Unit){
+fun TopBarSection(modifier: Modifier, fullNameVal: UiState<String>, greeting: String, onInValidUser: () -> Unit){
 
-    Text(greeting)
-    when(fullNameVal){
-        is UiState.Success ->{
-            Text(
-                fullNameVal.data, style = MaterialTheme.typography
-                    .titleLarge.copy(fontWeight = FontWeight.W900, fontSize = 30.sp))
+    Column(modifier = modifier) {
+        Text(greeting)
+        when(fullNameVal){
+            is UiState.Success ->{
+                Text(
+                    fullNameVal.data, style = MaterialTheme.typography
+                        .titleLarge.copy(fontWeight = FontWeight.W900, fontSize = 30.sp))
+            }
+            is UiState.Failure ->{
+                onInValidUser()
+            }
+            else ->{}
         }
-        is UiState.Failure ->{
-            onInValidUser()
-        }
-        else ->{}
     }
 }

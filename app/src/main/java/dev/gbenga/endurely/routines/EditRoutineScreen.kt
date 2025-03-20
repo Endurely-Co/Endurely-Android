@@ -221,7 +221,7 @@ fun EditRoutineScreen (
             showMessage = it
             LaunchedEffect(showMessage) {
                 coroutineScope.launch {
-                    delay(3000)
+                    delay(2000)
                 navigation.pop()
             } }
         })

@@ -112,7 +112,7 @@ class RoutineDetailViewModel(private val routineRepository: RoutineRepository) :
                         }
                     }
 
-                    this.routine = routine.data
+                    this@RoutineDetailViewModel.routine = routine.data
                     _routineDetail.update { it.copy(userExercises
                     = UiState.Success(routine.data.data.first().exercises),
                         statusCount = Pair(completedCount, inProgressCount),

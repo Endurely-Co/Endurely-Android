@@ -46,7 +46,7 @@ val onboardModule = module {
     viewModel { (handle: SavedStateHandle) -> WelcomeViewModel(handle, get()) }
     viewModel { (savedState: SavedStateHandle) -> LoginViewModel(savedState, get()) }
     viewModel { SignUpViewModel(get()) }
-    viewModel { (handle: SavedStateHandle) ->  DashboardViewModel(get(), get(), handle) }
+    viewModel { (handle: SavedStateHandle) ->  DashboardViewModel(get(), get(), get(), get(), get(), handle) }
     viewModel { EndurelyBottomBarViewModel() }
     viewModel { SettingsViewModel(get()) }
     single { RoutineRepository(get(), get(), get()) }
