@@ -8,12 +8,13 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDateInstance(),
                     private val serverDateFormat: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
                         Locale.getDefault()),
     private val timeFormat: DateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()),
-    private val calendar : Calendar= Calendar.getInstance()) {
+    private val calendar : Calendar= Calendar.getInstance(TimeZone.getTimeZone("Europe/London"))) {
 
     private var dateInMillis: Long= 0L
 
@@ -32,7 +33,8 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
 
     fun parseDateTime(hour: Int,minute: Int, date: Long) = calendar.apply {
         timeInMillis = date
-        this.add(Calendar.DAY_OF_WEEK, -1)
+       // timeZone = TimeZone.getTimeZone("Europe/London")
+        //this.add(Calendar.DAY_OF_WEEK, -1)
         this[Calendar.MINUTE] = minute
         this[Calendar.HOUR_OF_DAY] = hour
     }.timeInMillis
@@ -93,7 +95,7 @@ class DateTimeUtils(private val dateFormat: DateFormat = SimpleDateFormat.getDat
 class DateUtils( private val serverDateFormat:
                  DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss",
         Locale.getDefault()),
-                 private val calendar : Calendar= Calendar.getInstance(),
+                 private val calendar : Calendar= Calendar.getInstance(TimeZone.getTimeZone("Europe/London")),
                  private val dateTimeUtils: DateTimeUtils = DateTimeUtils()){
     fun reverseServerTime(timeDate: String): String{
         val validSeg = timeDate.split(".")

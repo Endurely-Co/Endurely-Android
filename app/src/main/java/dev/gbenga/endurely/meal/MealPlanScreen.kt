@@ -55,7 +55,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import dev.gbenga.endurely.R
 import dev.gbenga.endurely.core.SevenDaysChips
 import dev.gbenga.endurely.core.rememberDateTimeUtils
@@ -76,6 +79,7 @@ import dev.gbenga.endurely.ui.theme.normalPadding
 import dev.gbenga.endurely.ui.theme.normalRadius
 import dev.gbenga.endurely.ui.theme.smallPadding
 import dev.gbenga.endurely.ui.theme.xLargePadding
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -86,6 +90,7 @@ fun MealPlanScreen(navController: EndureNavigation,
                    viewModel: MealPlanViewModel = koinViewModel()) {
 
     val mealPlanUi by viewModel.mealPlanUi.collectAsStateWithLifecycle()
+//    val messageUi by viewModel.message.collectAsStateWithLifecycle(null)
 
     val daysState = rememberLazyListState()
 
@@ -96,6 +101,10 @@ fun MealPlanScreen(navController: EndureNavigation,
     val addNewMealPlanSheet = rememberModalBottomSheetState(
         skipPartiallyExpanded = false
     )
+
+    LaunchedEffect(Unit) {
+        viewModel.deliverUiMessage()
+    }
     var dateValue by remember { mutableStateOf("Enter date") }
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -103,10 +112,39 @@ fun MealPlanScreen(navController: EndureNavigation,
     val dateFormater = rememberDateTimeUtils()
     var message by remember { mutableStateOf("") }
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(Unit) {
+        viewModel.message
+            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { messageUi ->
+                // Handle the one-time event
+                println("Event received: $messageUi")
+                messageUi.feedbackMsg?.let { msg ->
+                    message = msg
+                }
+
+                messageUi.reload?.let { reload ->
+                    if(reload){
+                        viewModel.getMealPlanByUserId()
+                    }
+                }
+                // e.g., navigate, show snackbar, etc.
+            }
+    }
+
+
+
+
+
     LaunchedEffect(message) {
         if (message.isNotBlank()){
             snackbarHostState.showSnackbar(message)
         }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getMealPlanByUserId()
     }
 
     LaunchedEffect(showBottomSheet) {
@@ -180,9 +218,7 @@ fun MealPlanScreen(navController: EndureNavigation,
                     dateValue = dateFormater.getDate(millis)
             } ) {
                 coroutineScope.launch {
-
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                    //snackbarHostState.showSnackbar(it)
                 }
             }
         }

@@ -53,7 +53,9 @@ fun GymScaffold(
                 Snackbar(
                     contentColor = Color.White,
                     containerColor = appColor(isDarkMode).snackBg,
-                    snackbarData = data
+                    snackbarData = data,
+                    actionColor = Color.Red,
+                    actionContentColor = Color.Red,
                 )
             }
         },

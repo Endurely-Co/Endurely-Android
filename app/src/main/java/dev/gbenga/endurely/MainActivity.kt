@@ -101,7 +101,7 @@ class MainActivity : ComponentActivity() {
                     composable<MealPlanDetails> {
                         val planDetail = it.toRoute<MealPlanDetails>()
                         MealPlanDetailsScreen(navigation = navHost,
-                            planId=planDetail.planId)
+                            planId=planDetail.planId, isDarkMode=isDarkMode)
                     }
 
                     composable<RoutineDetail>() {

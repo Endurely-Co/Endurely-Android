@@ -1,5 +1,6 @@
 package dev.gbenga.endurely.di
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import dev.gbenga.endurely.core.data.SettingsDatastore
 import dev.gbenga.endurely.dashboard.DashboardRepository
@@ -12,6 +13,7 @@ import dev.gbenga.endurely.meal.MealPlanDetailsViewModel
 import dev.gbenga.endurely.meal.MealPlanRepository
 import dev.gbenga.endurely.meal.MealPlanViewModel
 import dev.gbenga.endurely.meal.MealService
+import dev.gbenga.endurely.meal.data.MessageSharedPref
 import dev.gbenga.endurely.onboard.OnboardRepository
 import dev.gbenga.endurely.onboard.data.OnboardService
 import dev.gbenga.endurely.onboard.login.LoginViewModel
@@ -42,7 +44,8 @@ val onboardModule = module {
     single { OnboardRepository(get(), get(), get()) }
     single { DashboardRepository(get(), get()) }
     single { SettingsRepository(get(), get(), get()) }
-    single { MealPlanRepository(get(), get()) }
+    single { get<Context>().getSharedPreferences("dev.gbenga.endurely.di.Endurely.Co", Context.MODE_PRIVATE)}
+    single { MessageSharedPref(get()) }
     viewModel { (handle: SavedStateHandle) -> WelcomeViewModel(handle, get()) }
     viewModel { (savedState: SavedStateHandle) -> LoginViewModel(savedState, get()) }
     viewModel { SignUpViewModel(get()) }
@@ -54,7 +57,7 @@ val onboardModule = module {
     viewModel { RoutineDetailViewModel(get()) }
     viewModel{ AddNewRoutineViewModel(get(), get(), get()) }
     viewModel { ExerciseSuggestionsViewModel(get()) }
-    viewModel { (handle: SavedStateHandle) -> MealPlanViewModel(get(), get(), get(), handle) }
-    viewModel { MealPlanDetailsViewModel(get()) }
+    viewModel { (handle: SavedStateHandle) -> MealPlanViewModel(get(), get(), get(), get(), handle) }
+    viewModel { MealPlanDetailsViewModel(get(), get()) }
     viewModel { EditRoutineViewModel(get(), get()) }
 }

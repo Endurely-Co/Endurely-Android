@@ -19,6 +19,9 @@ data class MealPlanUiState(
     val readOnlyTf: Boolean = false,
     )
 
+
+data class MessageData(val feedbackMsg: String? = null, val reload: Boolean=false)
+
 sealed interface ButtonAction{
     val title: String
     data class Continue(

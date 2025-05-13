@@ -1,6 +1,7 @@
 package dev.gbenga.endurely.meal
 
 import android.util.Log
+import com.google.gson.Gson
 import dev.gbenga.endurely.core.Repository
 import dev.gbenga.endurely.core.data.UserDataStore
 import dev.gbenga.endurely.meal.data.MealPlanRequest
@@ -22,7 +23,6 @@ class MealPlanRepository(private val mealService: MealService,
     }
 
     suspend fun planNewMeal(request: MealPlanRequest) = repoContext {
-        Log.d("request_request", "request -> $request")
         mealService.planMeal(request.copy(user = getUserId()))
     }
 
@@ -32,5 +32,9 @@ class MealPlanRepository(private val mealService: MealService,
 
     suspend fun getMealPlanForUserById(planId: String) = repoContext {
         mealService.getMealPlanForUserById(getUserId(), planId.toInt())
+    }
+
+    suspend fun deleteDeleteMealPlan(planId: String) = repoContext{
+        mealService.deleteMealPlan(getUserId(), planId.toInt())
     }
 }

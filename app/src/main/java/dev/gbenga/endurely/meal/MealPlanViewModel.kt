@@ -11,23 +11,35 @@ import dev.gbenga.endurely.core.UiState
 import dev.gbenga.endurely.meal.data.GetMealPlan
 import dev.gbenga.endurely.meal.data.MealPlan
 import dev.gbenga.endurely.meal.data.MealPlanRequest
+import dev.gbenga.endurely.meal.data.MessageSharedPref
 import dev.gbenga.endurely.meal.data.NutrientFromMealRequest
 import dev.gbenga.endurely.meal.data.NutrientItem
 import dev.gbenga.endurely.onboard.data.RepoState
 import dev.gbenga.endurely.routines.DayOfWeek
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
                         private val dayNameUtil: DateUtilsNames,
                         private val dateTimeUtil: DateTimeUtils,
+                        private val messageSharedPref: MessageSharedPref,
                         private val savedStateHandle: SavedStateHandle
 ) : EndureNavViewModel() {
 
     private var _preservedList: List<Pair<String, GetMealPlan>>? = null
     private val _mealPlanUi = MutableStateFlow(MealPlanUiState())
-    //private val _dayAndRoutine = MutableStateFlow<List<Pair<String, GetMealPlan>>>(emptyList())
+
+    private val _message = MutableSharedFlow<MessageData>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
+    val message = _message.asSharedFlow()
+
     private var nutrients: List<NutrientItem>? = null
 
     val mealPlanUi = _mealPlanUi.asStateFlow()
@@ -38,12 +50,28 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
     }
 
     init {
-        getMealPlanByUserId()
         _mealPlanUi.update { it.copy(days = Tokens
             .daysOfWeek.map { day ->
             DayOfWeek(day)
         }, colors = listOf(0xFFE53935,0xff2E7D32,0xFFFFA000, 0xFFE0E0E0)
         ) }
+
+    }
+
+    fun deliverUiMessage(){
+        runInScope {
+            messageSharedPref.getMessage()?.let {
+                _message.emit(MessageData(feedbackMsg = it))
+                messageSharedPref.clear()
+            }
+        }
+
+//        runInScope {
+//            messageSharedPref.isReload().let {
+//                _message.emit(MessageData(reload = it))
+//                messageSharedPref.clear()
+//            }
+//        }
 
     }
 
@@ -80,6 +108,7 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
                     }, mealDateTime = dateTimeUtil.getServerDate(mealDateMillis)))){
                     is RepoState.Success ->{
                         _mealPlanUi.update { it.copy(plannedMeal = UiState.Success(plannedMeal.data)) }
+                        _message.emit(MessageData(reload = true))
                     }
                     is RepoState.Error ->{
                         _mealPlanUi.update { it.copy(plannedMeal = UiState.Failure(plannedMeal.errorMsg)) }
@@ -91,6 +120,7 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
     }
 
     fun getMealPlanByUserId(){
+        Log.d("RepoState", "RepoState - RepoState - RepoState")
         _mealPlanUi.update { it.copy(mealPlan = UiState.Loading()) }
         runInScope {
             when(val mealPlan = mealPlanRepository.getMealPlanForUser()){
@@ -108,21 +138,6 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
         }
     }
 
-    fun setDate(mealDateTime: String){
-
-    }
-
-    /*
-    onAction = { mealDateTime ->
-                           Log.d("mealDateTime", "mealDateTime: $mealDateTime")
-                           planMeal(MealPlanRequest(mealDateTime=mealDateTime,
-                               mealPlans=nutrients.data.data.nutrients.map { nutrient ->
-                                   MealPlan(meal=nutrient.item,
-                                       foodItemId = nutrient.id)
-                               }
-                           ))
-                       }
-     */
 
     fun requestFoodNutrients(meal: String){
         _mealPlanUi.update { it.copy(mealNutrients = UiState.Loading()) }
@@ -136,11 +151,8 @@ class MealPlanViewModel(private val mealPlanRepository: MealPlanRepository,
                            button = ButtonAction.AddMeal())
                        }
                    }
-                   Log.d("RepoState", "RepoState -> {nutrients.data.data.nutrients")
-
                }
                is RepoState.Error ->{
-                   Log.d("RepoState", "RepoState -> $nutrients.errorMsg}")
                    _mealPlanUi.update { it.copy(mealNutrients = UiState.Failure(nutrients.errorMsg)) }
                }
            }
